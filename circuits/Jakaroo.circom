@@ -24,19 +24,19 @@ template jakaroo(){
         // then the hashed value store it in new_playground.
         component hashPoseidon0 = Poseidon(16);
         for(var i = 0; i < 16; i++){
-        hashPoseidon0.inputs[i] <== playground[i];
+            hashPoseidon0.inputs[i] <== playground[i];
         }
         hashPoseidon0.out === current_playground_commit;
-        hashPoseidon0.out ==> new_playground; 
+        hashPoseidon0.out ==> new_playground; // The new playground should goes here
 
     // Make sure players cards are the same as in smart contract
         // choose any hash function, then check if its correct with the current new_cards_commit  
         component hashPoseidon1 = Poseidon(5);
         for(var i = 0; i < 5; i++){
-        hashPoseidon1.inputs[i] <== players_cards[i];
+            hashPoseidon1.inputs[i] <== players_cards[i];
         }
         hashPoseidon1.out === players_cards_commit;
-        hashPoseidon1.out ==> new_cards_commit;
+        hashPoseidon1.out ==> new_cards_commit; // The new cards commit should goes here
 
     // Extract the card and make sure it is not an empty card slot
         // check its value if it is value between 0,4 - then check the array index value not 0.
@@ -47,7 +47,8 @@ template jakaroo(){
         rangeCard.out === 1;
         
         component notZero = IsNotZero();
-        notZero.in <== players_cards[player_card];
+        
+        notZero.in <-- players_cards[player_card];
         notZero.out === 1; 
     
         // Make sure player plays his own ball
