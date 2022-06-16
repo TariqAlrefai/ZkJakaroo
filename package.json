@@ -1,0 +1,22 @@
+{
+  "name": "zkjakaroo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TariqAlrefai/ZkJakaroo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TariqAlrefai/ZkJakaroo/issues"
+  },
+  "homepage": "https://github.com/TariqAlrefai/ZkJakaroo#readme",
+  "dependencies": {
+    "circomlib": "^2.0.4"
+  }
+}
