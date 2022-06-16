@@ -27,7 +27,7 @@ template jakaroo(){
         hashPoseidon0.inputs[i] <== playground[i];
         }
         hashPoseidon0.out === current_playground_commit;
-        hashPoseidon0.out ==> new_playground;
+        hashPoseidon0.out ==> new_playground; 
 
     // Make sure players cards are the same as in smart contract
         // choose any hash function, then check if its correct with the current new_cards_commit  
@@ -46,9 +46,9 @@ template jakaroo(){
         rangeCard.range[1] <== 4;
         rangeCard.out === 1;
         
-        // component notZero = IsNotZero();
-        // notZero.in <== players_cards[player_card];
-        // notZero.out === 1; 
+        component notZero = IsNotZero();
+        notZero.in <== players_cards[player_card];
+        notZero.out === 1; 
     
         // Make sure player plays his own ball
         component only_player_balls1 = onlyPlayerBalls();

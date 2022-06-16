@@ -17,10 +17,6 @@ template onlyPlayerBalls(){
     component Eq1 = IsEqual();
     component Eq2 = IsEqual();
     component Eq3 = IsEqual();
-    Or.in[0] <== ball0;
-    Or.in[1] <== ball1;
-    Or.in[2] <== ball2;
-    Or.in[3] <== ball3;
 
     Eq0.in[0] <== played_ball;
     Eq0.in[1] <== ball0;
