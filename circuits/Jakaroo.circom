@@ -46,11 +46,13 @@ template jakaroo(){
         rangeCard.range[1] <== 4;
         rangeCard.out === 1;
         
+        // See more about this, maybe logic is not correct {
         component notZero = IsNotZero();
         
         notZero.in <-- players_cards[player_card];
         notZero.out === 1; 
-    
+        // }
+        
         // Make sure player plays his own ball
         component only_player_balls1 = onlyPlayerBalls();
         only_player_balls1.playerId <== playerId;
