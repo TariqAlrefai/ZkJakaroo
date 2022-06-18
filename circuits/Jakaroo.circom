@@ -4,6 +4,8 @@ include "../node_modules/circomlib/circuits/poseidon.circom";
 include "./logicgates.circom";
 include "../node_modules/circomlib/circuits/gates.circom";
 include "./playerBalls.circom";
+include "./playingCards.circom";
+include "../node_modules/circomlib/circuits/mux4.circom";
 
 
 template jakaroo(){
@@ -16,8 +18,9 @@ template jakaroo(){
     signal input played_ball;
     signal input options; // Optional, depending on played card (1, 11)
 
+    // signal output player_card;
     signal output new_cards_commit;
-    signal output new_playground;
+    signal output new_playground_commit;
 
     // Make sure it is the same playground as in smart contract
         // choose any hash function, then check if its correct with the current playgrond new_playground
@@ -27,16 +30,24 @@ template jakaroo(){
             hashPoseidon0.inputs[i] <== playground[i];
         }
         hashPoseidon0.out === current_playground_commit;
-        hashPoseidon0.out ==> new_playground; // The new playground should goes here
+        component hashPoseidon1 = Poseidon(16);
+        for(var i = 0; i < 16; i++){
+            hashPoseidon1.inputs[i] <== playground[i];
+        }
+        hashPoseidon1.out ==> new_playground_commit; // The new playground should goes here
 
     // Make sure players cards are the same as in smart contract
         // choose any hash function, then check if its correct with the current new_cards_commit  
-        component hashPoseidon1 = Poseidon(5);
+        component hashPoseidon2 = Poseidon(5);
         for(var i = 0; i < 5; i++){
-            hashPoseidon1.inputs[i] <== players_cards[i];
+            hashPoseidon2.inputs[i] <== players_cards[i];
         }
         hashPoseidon1.out === players_cards_commit;
-        hashPoseidon1.out ==> new_cards_commit; // The new cards commit should goes here
+        component hashPoseidon3 = Poseidon(4);
+        for(var i = 0; i < 4; i++){
+            hashPoseidon3.inputs[i] <== players_cards[i];
+        }
+        hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
 
     // Extract the card and make sure it is not an empty card slot
         // check its value if it is value between 0,4 - then check the array index value not 0.
@@ -46,18 +57,10 @@ template jakaroo(){
         rangeCard.range[1] <== 4;
         rangeCard.out === 1;
         
-        // See more about this, maybe logic is not correct {
         component notZero = IsNotZero();
         
         notZero.in <-- players_cards[player_card];
-        notZero.out === 1; 
-        // }
-        
-        // Make sure player plays his own ball
-        component only_player_balls1 = onlyPlayerBalls();
-        only_player_balls1.playerId <== playerId;
-        only_player_balls1.played_ball <== played_ball;
-        only_player_balls1.output0 === 1; 
+        notZero.out === 0; 
 
         // His ball is in playground (not in 0 or in winning place)
         component rangeBall = RangeProof(16);
@@ -66,35 +69,28 @@ template jakaroo(){
         rangeBall.range[1] <== 73;
         rangeBall.out === 1;
 
-// Determine card functionality
-    // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12   
-        // if (player_card == 2 ) { // Card 2
-        //     played_ball = played_ball +2; 
-        // }
-        // if (player_card == 3 ) { // Card 3
-        //     played_ball = played_ball +3; 
-        // }
-        // if (player_card == 4 ) { // Card 4
-        //     played_ball = played_ball -4; 
-        // }
-        // if (player_card == 6 ) { // Card 6
-        //     played_ball = played_ball +6; 
-        // }
-        // if (player_card == 7 ) { // Card 7
-        //     played_ball = played_ball +7; 
-        // }
-        // if (player_card == 8 ) { // Card 8
-        //     played_ball = played_ball +8; 
-        // }
-        // if (player_card == 9 ) { // Card 9
-        //     played_ball = played_ball +9; 
-        // }
-        // if (player_card == 10 ) { // Card 10
-        //     played_ball = played_ball +10; 
-        // }
-        // if (player_card == 12 ) { // Card 12
-        //     played_ball = played_ball +12; 
-        // }
+
+// Determine card functionality     
+    // Make sure player plays his own ball
+        component only_player_balls1 = onlyPlayerBalls();
+        only_player_balls1.playerId <== playerId;
+        only_player_balls1.played_ball <== played_ball;
+        only_player_balls1.output0 === 1; 
+
+
+    // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12
+        component selector = playingCards();
+        component mux4 = Mux4();
+          for(var i = 0; i < 16; i++){
+            mux4.c[i] <== playground[i] ;
+        }
+        mux4.s[0] ==> selector.binary_selector[0];
+        mux4.s[1] ==> selector.binary_selector[1];
+        mux4.s[2] ==> selector.binary_selector[2];
+        mux4.s[3] ==> selector.binary_selector[3];
+        
+        // mux4.out === 1;
+        // var playing_playground[16];
 
         // No ball of his balls block the play
 
@@ -103,19 +99,12 @@ template jakaroo(){
         // No ball in its base that block the play 
 
     // cards 1-n, 13-n 
-        // Make sure player plays his own ball
-        component only_player_balls2 = onlyPlayerBalls();
-        only_player_balls2.playerId <== playerId;
-        only_player_balls2.played_ball <== played_ball;
-        only_player_balls2.output0 === 1;  
+
     // cards 11
-        // Make sure player plays his own ball
-        component only_player_balls3 = onlyPlayerBalls();
-        only_player_balls3.playerId <== playerId;
-        only_player_balls3.played_ball <== played_ball;
-        only_player_balls3.output0 === 1; 
+
     // cards 5
 
 }
+
 
 component main = jakaroo();

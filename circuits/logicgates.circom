@@ -49,5 +49,5 @@ template IsNotZero() {
 
     out <== -in*inv +1;
     
-    in*out === 1;
+    in*out === 0;
 }
