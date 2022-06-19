@@ -14,9 +14,11 @@ template jakaroo(){
     signal input playground[16]; // one array for the player's balls
     signal input current_playground_commit; // hash of playground
     signal input players_cards[5];
+    signal input new_player_cards[5];
     signal input players_cards_commit;
     signal input player_card;
     signal input played_ball;
+    signal input new_playground[16];
     signal input options; // Optional, depending on played card (1, 11)
 
     // signal output player_card;
@@ -33,7 +35,7 @@ template jakaroo(){
         hashPoseidon0.out === current_playground_commit;
         component hashPoseidon1 = Poseidon(16);
         for(var i = 0; i < 16; i++){
-            hashPoseidon1.inputs[i] <== playground[i];
+            hashPoseidon1.inputs[i] <== new_playground[i];
         }
         hashPoseidon1.out ==> new_playground_commit; // The new playground should goes here
 
@@ -82,29 +84,82 @@ template jakaroo(){
     // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12
         component selector = playingCards();
         component mux4 = Mux4();
-          for(var i = 0; i < 16; i++){
-            mux4.c[i] <== playground[i];
+        // add to first stage MUX the card from 1 to 12. 
+        var j=1;
+          for(var i = 0; i < 12; i++){
+            mux4.c[i] <== playground[i] + j;
+            j = j+1;
         }
 
-        component mux2_0 = Mux1();
-        component mux2_1 = Mux1();
-        component mux2_2 = Mux1();
-        component mux2_3 = Mux1();
-        component mux2_4 = Mux1();
-        component mux2_5 = Mux1();
-        component mux2_6 = Mux1();
-        component mux2_7 = Mux1();
-        component mux2_8 = Mux1();
-        component mux2_9 = Mux1();
-        component mux2_10 = Mux1();
-        component mux2_11 = Mux1();
-        component mux2_12 = Mux1();
-        component mux2_13 = Mux1();
-        component mux2_14 = Mux1();
-        component mux2_15 = Mux1();
-        component mux2_16 = Mux1();
+// Second stage of MUX
+        component mux1_0 = Mux1();
+        component mux1_1 = Mux1();
+        component mux1_2 = Mux1();
+        component mux1_3 = Mux1();
+        component mux1_4 = Mux1();
+        component mux1_5 = Mux1();
+        component mux1_6 = Mux1();
+        component mux1_7 = Mux1();
+        component mux1_8 = Mux1();
+        component mux1_9 = Mux1();
+        component mux1_10 = Mux1();
+        component mux1_11 = Mux1();
+        component mux1_12 = Mux1();
+        component mux1_13 = Mux1();
+        component mux1_14 = Mux1();
+        component mux1_15 = Mux1();
 
-
+        mux1_0.c[0] <== playground[0];
+        mux1_1.c[0] <== playground[1];
+        mux1_2.c[0] <== playground[2];
+        mux1_3.c[0] <== playground[3];
+        mux1_4.c[0] <== playground[4];
+        mux1_5.c[0] <== playground[5];
+        mux1_6.c[0] <== playground[6];
+        mux1_7.c[0] <== playground[7];
+        mux1_8.c[0] <== playground[8];
+        mux1_9.c[0] <== playground[9];
+        mux1_10.c[0] <== playground[10];
+        mux1_11.c[0] <== playground[11];
+        mux1_12.c[0] <== playground[12];
+        mux1_13.c[0] <== playground[13];
+        mux1_14.c[0] <== playground[14];
+        mux1_15.c[0] <== playground[15];
+        
+        mux1_0.c[1] <== playground[0];
+        mux1_1.c[1] <== playground[1];
+        mux1_2.c[1] <== playground[2];
+        mux1_3.c[1] <== playground[3];
+        mux1_4.c[1] <== playground[4];
+        mux1_5.c[1] <== playground[5];
+        mux1_6.c[1] <== playground[6];
+        mux1_7.c[1] <== playground[7];
+        mux1_8.c[1] <== playground[8];
+        mux1_9.c[1] <== playground[9];
+        mux1_10.c[1] <== playground[10];
+        mux1_11.c[1] <== playground[11];
+        mux1_12.c[1] <== playground[12];
+        mux1_13.c[1] <== playground[13];
+        mux1_14.c[1] <== playground[14];
+        mux1_15.c[1] <== playground[15];
+        
+        mux1_0.out ==> new_playground[0];
+        mux1_1.out ==> new_playground[1];
+        mux1_2.out ==> new_playground[2];
+        mux1_3.out ==> new_playground[3];
+        mux1_4.out ==> new_playground[4];
+        mux1_5.out ==> new_playground[5];
+        mux1_6.out ==> new_playground[6];
+        mux1_7.out ==> new_playground[7];
+        mux1_8.out ==> new_playground[8];
+        mux1_9.out ==> new_playground[9];
+        mux1_10.out ==> new_playground[10];
+        mux1_11.out ==> new_playground[11];
+        mux1_12.out ==> new_playground[12];
+        mux1_13.out ==> new_playground[13];
+        mux1_14.out ==> new_playground[14];
+        mux1_15.out ==> new_playground[15];
+        
 
         // No ball of his balls block the play
 
