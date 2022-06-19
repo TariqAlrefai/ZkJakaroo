@@ -8,7 +8,6 @@ include "./playingCards.circom";
 include "../node_modules/circomlib/circuits/mux4.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
 
-
 template jakaroo(){
     signal input playerId; // To identify which player (No player can jumb above its own ball)
     signal input playground[16]; // one array for the player's balls
@@ -22,13 +21,14 @@ template jakaroo(){
     // Normal signal
     signal new_playground[16];
     signal new_players_cards[5];
+    signal winning_playground[16];
 
     signal output new_cards_commit;
     signal output new_playground_out[16];
     signal output new_playground_commit; // might not be needed
 
     // Make sure it is the same playground as in smart contract
-        // choose any hash function, then check if its correct with the current playgrond new_playground
+        // choose any hash function, then check if its correct with the current playground new_playground
         // then the hashed value store it in new_playground.
         // component hashPoseidon0 = Poseidon(16);
         // for(var i = 0; i < 16; i++){
@@ -84,6 +84,8 @@ template jakaroo(){
 
 
     // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12
+
+    // Mux4 will be responsable for choosen cards.
         component selector = playingCards();
         selector.player_card <== player_card;
         component mux4 = Mux4();
@@ -113,6 +115,7 @@ template jakaroo(){
             mux4.s[i] <== selector.binary_selector[i];
         }
         
+    // Mux1 will be responsable for changing the ball inside playground
         component mux1[16];
         component isequal[16];
         for(var i = 0; i < 16; i++){
@@ -129,6 +132,8 @@ template jakaroo(){
             mux1[i].out ==> new_playground[i];
         }
 
+        
+
         // No ball of his balls block the play
 
         // No two balls of others balls block the play
@@ -141,7 +146,46 @@ template jakaroo(){
 
     // cards 5
 
-}
+// Check winning
+    component winRange_P1[4];
+    for (var i=0; i<4; i++){
+        winRange_P1[i] = RangeProof(16);
+        winRange_P1[i].in <== new_playground[i];
+        winRange_P1[i].range[0] <== 72;
+        winRange_P1[i].range[1] <== 73;
+        winRange_P1[i].out ==> winning_playground[i];
+    }
+    component winRange_P2[4];
+    var j =4;
+    for (var i=0; i<4; i++){
+        winRange_P2[i] = RangeProof(16);
+        winRange_P2[i].in <== new_playground[j];
+        winRange_P2[i].range[0] <== 17;
+        winRange_P2[i].range[1] <== 18;
+        winRange_P2[i].out ==> winning_playground[j];
+        j = j+1;
+    }
+    var k=8;
+    component winRange_P3[4];
+    for (var i=0; i<4; i++){
+        winRange_P3[i] = RangeProof(16);
+        winRange_P3[i].in <== new_playground[k];
+        winRange_P3[i].range[0] <== 35;
+        winRange_P3[i].range[1] <== 36;
+        winRange_P3[i].out ==> winning_playground[k];
+        k=k+1;
+    }
+    var u=12;
+    component winRange_P4[4];
+    for (var i=0; i<4; i++){
+        winRange_P4[i] = RangeProof(16);
+        winRange_P4[i].in <== new_playground[u];
+        winRange_P4[i].range[0] <== 53;
+        winRange_P4[i].range[1] <== 54;
+        winRange_P4[i].out ==> winning_playground[u];
+        u = u+1;
+    }
 
+}
 
 component main = jakaroo();
