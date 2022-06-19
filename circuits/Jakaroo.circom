@@ -14,14 +14,15 @@ template jakaroo(){
     signal input playground[16]; // one array for the player's balls
     signal input current_playground_commit; // hash of playground
     signal input players_cards[5];
-    signal input new_player_cards[5];
     signal input players_cards_commit;
     signal input player_card;
     signal input played_ball;
-    signal input new_playground[16];
     signal input options; // Optional, depending on played card (1, 11)
+    
+    // Normal signal
+    signal new_playground[16];
+    signal new_players_cards[5];
 
-    // signal output player_card;
     signal output new_cards_commit;
     signal output new_playground_commit;
 
@@ -35,6 +36,7 @@ template jakaroo(){
         hashPoseidon0.out === current_playground_commit;
         component hashPoseidon1 = Poseidon(16);
         for(var i = 0; i < 16; i++){
+            
             hashPoseidon1.inputs[i] <== new_playground[i];
         }
         hashPoseidon1.out ==> new_playground_commit; // The new playground should goes here
@@ -48,7 +50,7 @@ template jakaroo(){
         hashPoseidon1.out === players_cards_commit;
         component hashPoseidon3 = Poseidon(4);
         for(var i = 0; i < 4; i++){
-            hashPoseidon3.inputs[i] <== players_cards[i];
+            hashPoseidon3.inputs[i] <== new_players_cards[i];
         }
         hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
 
