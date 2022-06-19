@@ -6,7 +6,7 @@ include "../node_modules/circomlib/circuits/gates.circom";
 include "./playerBalls.circom";
 include "./playingCards.circom";
 include "../node_modules/circomlib/circuits/mux4.circom";
-include "../node_modules/circomlib/circuits/mux2.circom";
+include "../node_modules/circomlib/circuits/mux1.circom";
 
 
 template jakaroo(){
@@ -86,23 +86,23 @@ template jakaroo(){
             mux4.c[i] <== playground[i];
         }
 
-        component mux2_0 = Mux2();
-        component mux2_1 = Mux2();
-        component mux2_2 = Mux2();
-        component mux2_3 = Mux2();
-        component mux2_4 = Mux2();
-        component mux2_5 = Mux2();
-        component mux2_6 = Mux2();
-        component mux2_7 = Mux2();
-        component mux2_8 = Mux2();
-        component mux2_9 = Mux2();
-        component mux2_10 = Mux2();
-        component mux2_11 = Mux2();
-        component mux2_12 = Mux2();
-        component mux2_13 = Mux2();
-        component mux2_14 = Mux2();
-        component mux2_15 = Mux2();
-        component mux2_16 = Mux2();
+        component mux2_0 = Mux1();
+        component mux2_1 = Mux1();
+        component mux2_2 = Mux1();
+        component mux2_3 = Mux1();
+        component mux2_4 = Mux1();
+        component mux2_5 = Mux1();
+        component mux2_6 = Mux1();
+        component mux2_7 = Mux1();
+        component mux2_8 = Mux1();
+        component mux2_9 = Mux1();
+        component mux2_10 = Mux1();
+        component mux2_11 = Mux1();
+        component mux2_12 = Mux1();
+        component mux2_13 = Mux1();
+        component mux2_14 = Mux1();
+        component mux2_15 = Mux1();
+        component mux2_16 = Mux1();
 
 
 
