@@ -19,7 +19,7 @@ template Num2Bits1(n) {
 template playingCards(){
     signal input player_card;
     signal output binary_selector[4];
-    component converter2Bits = Num2Bits1(4);
+    component converter2Bits = Num2Bits(4);
 
     converter2Bits.in <== player_card;
     binary_selector[0] <== converter2Bits.out[0];
