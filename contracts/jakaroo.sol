@@ -2,8 +2,8 @@
 pragma solidity 0.8.1;
 
 
-// - In the beggining of the game:
-//      - Make sure there are foure players
+// - In the beginning of the game:
+//      - Make sure there are four players
 //      - Distribute cards
 // - Make sure the current player is valid
 // - Run new play
@@ -45,10 +45,9 @@ contract Jakaroo {
         // Update structure
         // Increase roundCounter
         // Move the turn
-        // 
     }
 
     function CheckWinner() returns (){
-        
+        // Check for winner in playground array
     }
 }
