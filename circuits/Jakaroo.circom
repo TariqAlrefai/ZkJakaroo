@@ -11,12 +11,12 @@ include "../node_modules/circomlib/circuits/mux1.circom";
 template jakaroo(){
     signal input playerId; // To identify which player (No player can jumb above its own ball)
     signal input playground[16]; // one array for the player's balls
-    signal input current_playground_commit; // hash of playground
+    // signal input current_playground_commit; // hash of playground
     signal input players_cards[5];
-    signal input players_cards_commit;
+    // signal input players_cards_commit;
     signal input player_card;
     signal input played_ball;
-    signal input options; // Optional, depending on played card (1, 11)
+    // signal input options; // Optional, depending on played card (1, 11)
     
     // Normal signal
     signal new_playground[16];
@@ -50,10 +50,10 @@ template jakaroo(){
 
 // Determine card functionality     
     // Make sure player plays his own ball
-        component only_player_balls1 = onlyPlayerBalls();
-        only_player_balls1.playerId <== playerId;
-        only_player_balls1.played_ball <== played_ball;
-        only_player_balls1.output0 === 1; 
+        component only_player_balls = onlyPlayerBalls();
+        only_player_balls.playerId <== playerId;
+        only_player_balls.played_ball <== played_ball;
+        only_player_balls.output0 === 1; 
 
 
     // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12
@@ -65,8 +65,13 @@ template jakaroo(){
         
         for (var i=0; i<16; i++){
             mux4.c[i] <== i+1;
+
         }
 
+        for (var i=0; i<4; i++){
+            mux4.s[i] <== selector.binary_selector[i];
+        }
+        
         /* 
         1 -> 1 step forward
         2 -> 2 steps forward
@@ -81,13 +86,9 @@ template jakaroo(){
         11 -> 11 steps forward
         12 -> Queen -12- steps forward
         13 -> 13 King place
-        14 -> J Jack replacement
+        14 -> J Jack 11 steps backward
         */
 
-        for (var i=0; i<4; i++){
-            mux4.s[i] <== selector.binary_selector[i];
-        }
-        
     // Mux1 will be responsable for changing the ball inside playground
         component mux1[16];
         component isequal[16];
@@ -95,17 +96,24 @@ template jakaroo(){
             mux1[i] = Mux1();
             isequal[i]= IsEqual();
         }
-
+        var changing_pos;
         for (var i = 0; i < 16; i++){
+            // chanchanging_posging = (playground[i]+ mux4.out)%74;
+            // example: 
+            changing_pos = 55;
             mux1[i].c[0] <== playground[i];
-            mux1[i].c[1] <== playground[i]+ mux4.out;
+            mux1[i].c[1] <== changing_pos;
             isequal[i].in[0] <== played_ball;
             isequal[i].in[1] <== i;
             mux1[i].s <== isequal[i].out;
             mux1[i].out ==> new_playground[i];
         }
 
-        
+        // Starting Locations: 
+            // Player 1: 0
+            // Player 2: 19
+            // Player 3: 37
+            // Player 4: 55
 
         // No ball of his balls block the play
 
@@ -113,11 +121,7 @@ template jakaroo(){
 
         // No ball in its base that block the play 
 
-    // cards 1-n, 13-n 
 
-    // cards 11
-
-    // cards 5
 
 // Check winning
     component winRange_P1[4];
@@ -187,3 +191,12 @@ template jakaroo(){
 }
 
 component main = jakaroo();
+
+// circom tester => read circom to feed inputs. 
+// Card function => King
+// Card shuffling => smart contract
+// Generate Solidity & Wasm + power of tau, proof, .... etc.. . 
+// connecting of four wallets. 
+// Deployment on test net. 
+// writing readme + record a video. 
+// checking if the ball in winning game or not. 

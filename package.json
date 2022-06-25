@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx mocha"
   },
-  "repository": { 
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/TariqAlrefai/ZkJakaroo.git"
   },
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/TariqAlrefai/ZkJakaroo#readme",
   "dependencies": {
+    "circom_tester": "^0.0.14",
     "circomlib": "^2.0.4"
   },
   "devDependencies": {
@@ -28,4 +29,5 @@
     "hardhat": "^2.9.9",
     "mocha": "^10.0.0"
   }
+
 }
