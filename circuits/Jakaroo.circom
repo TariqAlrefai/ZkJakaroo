@@ -7,6 +7,7 @@ include "./playerBalls.circom";
 include "./playingCards.circom";
 include "../node_modules/circomlib/circuits/mux4.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
+include "../node_modules/circomlib/circuits/mux2.circom";
 
 template jakaroo(){
     signal input playerId; // To identify which player (No player can jumb above its own ball)
@@ -21,6 +22,7 @@ template jakaroo(){
     // Normal signal
     signal new_playground[16];
     signal new_players_cards[5];
+    signal base_playground[16];
     signal output winning_playground[16];
 
     signal output new_cards_commit;
@@ -92,6 +94,41 @@ template jakaroo(){
         13 -> 13 King place
         14 -> J Jack 11 steps backward
         */
+    // Balls Placement:
+        component IsEqual_P1[4];
+        component IsEqual_P2[4];
+        component IsEqual_P3[4];
+        component IsEqual_P4[4];
+
+        var a = 4;
+        var b = 8;
+        var c = 12;
+    
+        for (var i=0; i<4; i++){
+            IsEqual_P1[i] = IsEqual();
+            IsEqual_P1[i].in[0] <== playground[i];
+            IsEqual_P1[i].in[1] <== 100;
+            IsEqual_P1[i].out ==> base_playground[i];
+
+
+            IsEqual_P2[i] = IsEqual();
+            IsEqual_P2[i].in[0] <== playground[a];
+            IsEqual_P2[i].in[1] <== 100;
+            IsEqual_P2[i].out ==> base_playground[a];
+            a = a+1;
+
+            IsEqual_P3[i] = IsEqual();
+            IsEqual_P3[i].in[0] <== playground[b];
+            IsEqual_P3[i].in[1] <== 100;
+            IsEqual_P3[i].out ==> base_playground[b];
+            b=b+1;
+
+            IsEqual_P4[i] = IsEqual();
+            IsEqual_P4[i].in[0] <== playground[c];
+            IsEqual_P4[i].in[1] <== 100;
+            IsEqual_P4[i].out ==> base_playground[c];
+            c = c+1;
+        }
 
     // Mux1 will be responsable for changing the ball inside playground
         component Isequal[16];
@@ -103,11 +140,10 @@ template jakaroo(){
             Isequal[i] = IsEqual();
         }
         var changing_pos;
+        
         for (var i = 0; i < 16; i++){
             changing_pos = (playground[i]+ mux4.out)%74;
-            // example: 
-            // changing_pos = 55;
-            
+
             isequal[i].in[0] <== played_ball;
             isequal[i].in[1] <== i;
             Isequal[i].in[0] <== 13;
@@ -116,7 +152,7 @@ template jakaroo(){
             mux2[i].c[0] <== playground[i];
             mux2[i].c[1] <== playground[i];
             mux2[i].c[2] <-- changing_pos;
-            mux2[i].c[3]                      // for King
+            mux2[i].c[3] <== base_playground[i];    // for King
 
             mux2[i].s[0] <== isequal[i].out;
             mux2[i].s[1] <== Isequal[i].out;
@@ -124,94 +160,84 @@ template jakaroo(){
             mux2[i].out ==> new_playground[i];
 
         }
-        var starting_postion = 100;
-        if (playerId == 1){
-            starting_postion = 0;
-        }
-        
+
         // Starting Locations: 
             // Player 1: 0
             // Player 2: 19
             // Player 3: 37
             // Player 4: 55
 
-// Balls Placement: 
-    component equal_P1[4];
-    component equal_P2[4];
-    component equal_P3[4];
-    component equal_P4[4];
-    // Base balls => 100
-    var a = 4;
-    var b = 8;
-    var c = 12;
-    for (var i=0; i<4; i++){
-        equal_P1[i] = IsEqual(16);
-        equal_P1[i].in[0] <== playground[i];
-        equal_P1[i].in[1] <== 0;
-        equal_P1[i].out ==> 
-
-        equal_P2[i] = IsEqual(16);
-        equal_P2[i].in[0] <== playground[a] ;
-        equal_P2[i].in[1] <== 19;
-        equal_P2[i].out ==> 
-        a = a+1;
-
-        equal_P3[i] = IsEqual(16);
-        equal_P3[i].in[0] <== playground[b] ;
-        equal_P3[i].in[1] <== 37;
-        equal_P3[i].out ==> 
-        b=b+1;
-
-        equal_P4[i] = IsEqual(16);
-        equal_P4[i].in[0] <== playground[c] ;
-        equal_P4[i].in[1] <== 55;
-        equal_P4[i].out ==> 
-        c = c+1;
-    }
-
 
 // Check winning
-    component winRange_P1[4];
-    component winRange_P2[4];
-    component winRange_P3[4];
-    component winRange_P4[4];
 
     // winning balls => 200, 300, 400, 500. 
-    var j = 4;
-    var k = 8;
-    var u = 12;
-    for (var i=0; i<4; i++){
-        winRange_P1[i] = RangeProof(16);
-        winRange_P1[i].in <== new_playground[i];
-        winRange_P1[i].range[0] <== 72;
-        winRange_P1[i].range[1] <== 73;
-        winRange_P1[i].out ==> winning_playground[i];
-        new_playground[i] <== 200;
+        component winRange_P1[4];
+        component winRange_P2[4];
+        component winRange_P3[4];
+        component winRange_P4[4];
 
-        winRange_P2[i] = RangeProof(16);
-        winRange_P2[i].in <== new_playground[j];
-        winRange_P2[i].range[0] <== 17;
-        winRange_P2[i].range[1] <== 18;
-        winRange_P2[i].out ==> winning_playground[j];
-        new_playground[j] <== 300;
-        j = j+1;
+        component mux_P1[4];
+        component mux_P2[4];
+        component mux_P3[4];
+        component mux_P4[4];
 
-        winRange_P3[i] = RangeProof(16);
-        winRange_P3[i].in <== new_playground[k];
-        winRange_P3[i].range[0] <== 35;
-        winRange_P3[i].range[1] <== 36;
-        winRange_P3[i].out ==> winning_playground[k];
-        new_playground[k] <== 400;
-        k=k+1;
+        var j = 4;
+        var k = 8;
+        var u = 12;
+        for (var i=0; i<4; i++){
+            mux_P1[i] = Mux1();
+            mux_P2[i] = Mux1();
+            mux_P3[i] = Mux1();
+            mux_P4[i] = Mux1();
 
-        winRange_P4[i] = RangeProof(16);
-        winRange_P4[i].in <== new_playground[u];
-        winRange_P4[i].range[0] <== 53;
-        winRange_P4[i].range[1] <== 54;
-        winRange_P4[i].out ==> winning_playground[u];
-        new_playground[u] <== 500;
-        u = u+1;
+            winRange_P1[i] = RangeProof(16);
+            winRange_P1[i].in <== new_playground[i];
+            winRange_P1[i].range[0] <== 72;
+            winRange_P1[i].range[1] <== 73;
+            winRange_P1[i].out ==> winning_playground[i];
 
+            mux_P1[i].c[0] <== new_playground[i];
+            mux_P1[i].c[1] <== 200;
+            mux_P1[i].s    <== winRange_P1[i].out;
+            mux_P1[i].out  ==> new_playground_out[i];
+
+            winRange_P2[i] = RangeProof(16);
+            winRange_P2[i].in <== new_playground[j];
+            winRange_P2[i].range[0] <== 17;
+            winRange_P2[i].range[1] <== 18;
+            winRange_P2[i].out ==> winning_playground[j];
+
+            mux_P2[i].c[0] <== new_playground[j];
+            mux_P2[i].c[1] <== 300;
+            mux_P2[i].s    <== winRange_P2[i].out;
+            mux_P2[i].out  ==> new_playground_out[j];
+            j = j+1;
+
+            winRange_P3[i] = RangeProof(16);
+            winRange_P3[i].in <== new_playground[k];
+            winRange_P3[i].range[0] <== 35;
+            winRange_P3[i].range[1] <== 36;
+            winRange_P3[i].out ==> winning_playground[k];
+
+            mux_P3[i].c[0] <== new_playground[k];
+            mux_P3[i].c[1] <== 400;
+            mux_P3[i].s    <== winRange_P3[i].out;
+            mux_P3[i].out  ==> new_playground_out[k];
+            k=k+1;
+
+            winRange_P4[i] = RangeProof(16);
+            winRange_P4[i].in <== new_playground[u];
+            winRange_P4[i].range[0] <== 53;
+            winRange_P4[i].range[1] <== 54;
+            winRange_P4[i].out ==> winning_playground[u];
+
+            mux_P4[i].c[0] <== new_playground[u];
+            mux_P4[i].c[1] <== 500;
+            mux_P4[i].s    <== winRange_P4[i].out;
+            mux_P4[i].out  ==> new_playground_out[u];
+            u = u+1;
+
+        // winning balls => 200, 300, 400, 500. 
     }
 
     // Make sure it is the same playground as in smart contract
@@ -242,6 +268,7 @@ template jakaroo(){
         // hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
 
 }
+
 
 component main = jakaroo();
 
