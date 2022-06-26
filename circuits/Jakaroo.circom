@@ -118,14 +118,6 @@ template jakaroo(){
             // Player 3: 37
             // Player 4: 55
 
-        // No ball of his balls block the play
-
-        // No two balls of others balls block the play
-
-        // No ball in its base that block the play 
-
-
-
 // Check winning
     component winRange_P1[4];
     component winRange_P2[4];
@@ -141,6 +133,7 @@ template jakaroo(){
         winRange_P1[i].range[0] <== 72;
         winRange_P1[i].range[1] <== 73;
         winRange_P1[i].out ==> winning_playground[i];
+        
         // 100 ==> new_playground[i];
 
         winRange_P2[i] = RangeProof(16);

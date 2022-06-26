@@ -48,7 +48,7 @@ async function tester(){
                 // const output = w[1];
         })
         
-        it("Player only move withdraw from his cards", async ()=>{
+        it("Player only withdraw from his 5 cards", async ()=>{
 
             const circuit = await wasm_tester(PATH1);
             const w = await circuit.calculateWitness({
@@ -89,8 +89,6 @@ async function tester(){
 
             assert.ok(output == 1);
         })
-    
-    
     
     })
 }
