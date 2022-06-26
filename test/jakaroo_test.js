@@ -7,7 +7,8 @@ const assert = require("assert");
 // const Number2Float32Bytes = require("../src/floatCircom.js");
 // import {Number2Float32Bytes, Float32Bytes2Number} from "../src/float-circom.mjs";
 
-const MULTIPLY_PATH = "./circuits/Jakaroo.circom";
+const PATH1 = "./circuits/Jakaroo.circom";
+const PATH2 = "./circuits/playerBalls.circom";
 // const ADD_PATH = "./circuits/test_circuits/add.circom";
 // const LESSTHAN_PATH = "./circuits/test_circuits/LessThan.circom";
 // const GREATERTHAN_PATH = "./circuits/test_circuits/GreaterThan.circom";
@@ -17,30 +18,80 @@ const MULTIPLY_PATH = "./circuits/Jakaroo.circom";
 
 
 async function tester(){
+    // beforeEach(function (tester) {
+    //     this.timeout(100000);
+    // });
 
-    describe("Test Multiplicatoin", async ()=>{
+    describe("Jakaroo Test", async ()=>{
        
-        it("10.5*11.25", async ()=>{
-            let p1 = 10.5;
-            let p2 = 11.25;
+        it("Player 1 only move his balls", async ()=>{
 
-            const circuit = await wasm_tester(MULTIPLY_PATH);
+            const circuit = await wasm_tester(PATH1);
             const w = await circuit.calculateWitness({
-                playerId: 1,
-                playground: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                players_cards: [1,2,3,4,5],
-                player_card:4,
-                played_ball:4,
+                playerId: 0,
+                playground: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+                players_cards: [8,9,10,11,12],
+                player_card:2, 
+                played_ball:2, // 0|1|2|3
             });
 
-            await circuit.checkConstraints(w);
-            console.log(w);
-
-            const output = w[1];
-                        
-            // const rate = f32Mul(p1,p2)/Float32Bytes2Number(output);
-            // assert.ok(rate > 0.999 && rate < 1.001);
+            // INPUT:
+                // playground -> w[20:35]
+                // players_cards -> w[]
+                // player_card -> w[]
+                // playebl_ball -> w[36]
+            // OUTPUT: 
+                // New playground -> w[37:52]
+                
+                // console.log(w);
+                // console.log(w[2],w[37],w[38],w[52]);
+                // const output = w[1];
         })
+        
+        it("Player only move withdraw from his cards", async ()=>{
+
+            const circuit = await wasm_tester(PATH1);
+            const w = await circuit.calculateWitness({
+                playerId: 0,
+                playground: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+                players_cards: [8,9,10,11,12],
+                player_card:4, // 0 -> 4
+                played_ball:2, // 0|1|2|3
+            });
+        })
+        
+        it("Player 1 winning area", async ()=>{
+
+            const circuit = await wasm_tester(PATH1);
+            const w = await circuit.calculateWitness({
+                playerId: 0,
+                playground: [72,73,71,73,4,5,6,7,8,9,10,11,12,13,14,15],
+                players_cards: [1,9,10,11,12],
+                player_card:0, // 0 -> 4
+                played_ball:2, // 0|1|2|3
+            });
+            const output = w[1] && w[2] && w[3] && w[4];
+
+            assert.ok(output == 1);
+        })
+
+        it("Player 1 moving to winning area", async ()=>{
+
+            const circuit = await wasm_tester(PATH1);
+            const w = await circuit.calculateWitness({
+                playerId: 0,
+                playground: [60,57,52,49,4,5,6,7,8,9,10,11,12,13,14,15],
+                players_cards: [8,9,10,11,12],
+                player_card:4, // 0 -> 4
+                played_ball:0, // 0|1|2|3
+            });
+            const output = w[1];
+
+            assert.ok(output == 1);
+        })
+    
+    
+    
     })
 }
 

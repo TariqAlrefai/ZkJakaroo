@@ -21,7 +21,7 @@ template jakaroo(){
     // Normal signal
     signal new_playground[16];
     signal new_players_cards[5];
-    signal winning_playground[16];
+    signal output winning_playground[16];
 
     signal output new_cards_commit;
     signal output new_playground_out[16];
@@ -29,42 +29,45 @@ template jakaroo(){
 
     // Extract the card and make sure it is not an empty card slot
         // check its value if it is value between 0,4 - then check the array index value not 0.
+        // ???????????????????????????????
         component rangeCard = RangeProof(16);
-        rangeCard.in <== player_card;
+        rangeCard.in <-- player_card;
         rangeCard.range[0] <== 0;
         rangeCard.range[1] <== 4;
         rangeCard.out === 1;
         
-        component notZero = IsNotZero();
+        // component notZero = IsNotZero();
         
-        notZero.in <-- players_cards[player_card];
-        notZero.out === 0; 
+        // notZero.in <-- players_cards[player_card];
+        // notZero.out === 0; 
+
 
         // His ball is in playground (not in 0 or in winning place)
         component rangeBall = RangeProof(16);
-        rangeBall.in <== played_ball;
+        rangeBall.in <-- playground[played_ball];
         rangeBall.range[0] <== 0;
         rangeBall.range[1] <== 73;
         rangeBall.out === 1;
-
-
-// Determine card functionality     
+        
     // Make sure player plays his own ball
         component only_player_balls = onlyPlayerBalls();
         only_player_balls.playerId <== playerId;
         only_player_balls.played_ball <== played_ball;
         only_player_balls.output0 === 1; 
-
-
+        
+// Determine card functionality     
     // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12
 
     // Mux4 will be responsable for choosen cards.
         component selector = playingCards();
         selector.player_card <== player_card;
+        for (var i=0; i<5; i++){
+        selector.players_cards[i] <== players_cards[i];
+        }
         component mux4 = Mux4();
         
         for (var i=0; i<16; i++){
-            mux4.c[i] <== i+1;
+            mux4.c[i] <== i;
 
         }
 
@@ -98,11 +101,11 @@ template jakaroo(){
         }
         var changing_pos;
         for (var i = 0; i < 16; i++){
-            // chanchanging_posging = (playground[i]+ mux4.out)%74;
+            changing_pos = (playground[i]+ mux4.out)%74;
             // example: 
-            changing_pos = 55;
+            // changing_pos = 55;
             mux1[i].c[0] <== playground[i];
-            mux1[i].c[1] <== changing_pos;
+            mux1[i].c[1] <-- changing_pos;
             isequal[i].in[0] <== played_ball;
             isequal[i].in[1] <== i;
             mux1[i].s <== isequal[i].out;
@@ -138,6 +141,7 @@ template jakaroo(){
         winRange_P1[i].range[0] <== 72;
         winRange_P1[i].range[1] <== 73;
         winRange_P1[i].out ==> winning_playground[i];
+        // 100 ==> new_playground[i];
 
         winRange_P2[i] = RangeProof(16);
         winRange_P2[i].in <== new_playground[j];
@@ -164,29 +168,29 @@ template jakaroo(){
     // Make sure it is the same playground as in smart contract
         // choose any hash function, then check if its correct with the current playground new_playground
         // then the hashed value store it in new_playground.
-    //     component hashPoseidon0 = Poseidon(16);
-    //     for(var i = 0; i < 16; i++){
-    //         hashPoseidon0.inputs[i] <== playground[i];
-    //     }
-    //     hashPoseidon0.out === current_playground_commit;
-    //     component hashPoseidon1 = Poseidon(16);
-    //     for(var i = 0; i < 16; i++){
-    //         hashPoseidon1.inputs[i] <== new_playground[i];
-    //     }
-    //     hashPoseidon1.out ==> new_playground_commit; // The new playground should goes here
+        // component hashPoseidon0 = Poseidon(16);
+        // for(var i = 0; i < 16; i++){
+        //     hashPoseidon0.inputs[i] <== playground[i];
+        // }
+        // hashPoseidon0.out === current_playground_commit;
+        // component hashPoseidon1 = Poseidon(16);
+        // for(var i = 0; i < 16; i++){
+        //     hashPoseidon1.inputs[i] <== new_playground[i];
+        // }
+        // hashPoseidon1.out ==> new_playground_commit; // The new playground should goes here
 
-    // // Make sure players cards are the same as in smart contract
-    //     // choose any hash function, then check if its correct with the current new_cards_commit  
-    //     component hashPoseidon2 = Poseidon(5);
-    //     for(var i = 0; i < 5; i++){
-    //         hashPoseidon2.inputs[i] <== players_cards[i];
-    //     }
-    //     hashPoseidon1.out === players_cards_commit;
-    //     component hashPoseidon3 = Poseidon(4);
-    //     for(var i = 0; i < 4; i++){
-    //         hashPoseidon3.inputs[i] <== new_players_cards[i];
-    //     }
-    //     hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
+    // Make sure players cards are the same as in smart contract
+        // choose any hash function, then check if its correct with the current new_cards_commit  
+        // component hashPoseidon2 = Poseidon(5);
+        // for(var i = 0; i < 5; i++){
+        //     hashPoseidon2.inputs[i] <== players_cards[i];
+        // }
+        // hashPoseidon1.out === players_cards_commit;
+        // component hashPoseidon3 = Poseidon(4);
+        // for(var i = 0; i < 4; i++){
+        //     hashPoseidon3.inputs[i] <== new_players_cards[i];
+        // }
+        // hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
 
 }
 

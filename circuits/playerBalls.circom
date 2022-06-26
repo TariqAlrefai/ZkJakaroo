@@ -37,3 +37,6 @@ template onlyPlayerBalls(){
 
     output0 <== Or.out;
 }
+
+
+// component main = onlyPlayerBalls();

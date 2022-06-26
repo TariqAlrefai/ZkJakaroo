@@ -14,7 +14,7 @@ template MultiOR(n){
         and.in[i] <== 1 - in[i];   // Negate in[i]
     }
 
-    out <== and.out;
+    out <== 1-and.out;
 }
 
 template RangeProof(n) {
