@@ -28,12 +28,14 @@ async function tester(){
 
             const circuit = await wasm_tester(PATH1);
             const w = await circuit.calculateWitness({
-                playerId: 0,
-                playground: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
-                players_cards: [8,9,10,11,12],
+                playerId: 3,
+                playground: [20,100,100,100,100,100,100,100,100,100,100,100,100,100,100,55],
+                players_cards: [8,9,13,11,13],
                 player_card:2, 
-                played_ball:2, // 0|1|2|3
+                played_ball:15, // 0|1|2|3
             });
+            // console.log("============== Witness ==============")
+            // console.log(w);
 
             // INPUT:
                 // playground -> w[20:35]
@@ -48,47 +50,47 @@ async function tester(){
                 // const output = w[1];
         })
         
-        it("Player only withdraw from his 5 cards", async ()=>{
+        // it("Player only withdraw from his 5 cards", async ()=>{
 
-            const circuit = await wasm_tester(PATH1);
-            const w = await circuit.calculateWitness({
-                playerId: 0,
-                playground: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
-                players_cards: [8,9,10,11,12],
-                player_card:4, // 0 -> 4
-                played_ball:2, // 0|1|2|3
-            });
-        })
+        //     const circuit = await wasm_tester(PATH1);
+        //     const w = await circuit.calculateWitness({
+        //         playerId: 0,
+        //         playground: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+        //         players_cards: [8,9,10,11,12],
+        //         player_card:4, // 0 -> 4
+        //         played_ball:2, // 0|1|2|3
+        //     });
+        // })
         
-        it("Player 1 winning area", async ()=>{
+        // it("Player 1 winning area", async ()=>{
 
-            const circuit = await wasm_tester(PATH1);
-            const w = await circuit.calculateWitness({
-                playerId: 0,
-                playground: [72,73,71,73,4,5,6,7,8,9,10,11,12,13,14,15],
-                players_cards: [1,9,10,11,12],
-                player_card:0, // 0 -> 4
-                played_ball:2, // 0|1|2|3
-            });
-            const output = w[1] && w[2] && w[3] && w[4];
+        //     const circuit = await wasm_tester(PATH1);
+        //     const w = await circuit.calculateWitness({
+        //         playerId: 0,
+        //         playground: [72,73,71,73,4,5,6,7,8,9,10,11,12,13,14,15],
+        //         players_cards: [1,9,10,11,12],
+        //         player_card:0, // 0 -> 4
+        //         played_ball:2, // 0|1|2|3
+        //     });
+        //     const output = w[1] && w[2] && w[3] && w[4];
 
-            assert.ok(output == 1);
-        })
+        //     assert.ok(output == 1);
+        // })
 
-        it("Player 1 moving to winning area", async ()=>{
+        // it("Player 1 moving to winning area", async ()=>{
 
-            const circuit = await wasm_tester(PATH1);
-            const w = await circuit.calculateWitness({
-                playerId: 0,
-                playground: [60,57,52,49,4,5,6,7,8,9,10,11,12,13,14,15],
-                players_cards: [8,9,10,11,12],
-                player_card:4, // 0 -> 4
-                played_ball:0, // 0|1|2|3
-            });
-            const output = w[1];
+        //     const circuit = await wasm_tester(PATH1);
+        //     const w = await circuit.calculateWitness({
+        //         playerId: 0,
+        //         playground: [60,57,52,49,4,5,6,7,8,9,10,11,12,13,14,15],
+        //         players_cards: [8,9,10,11,12],
+        //         player_card:4, // 0 -> 4
+        //         played_ball:0, // 0|1|2|3
+        //     });
+        //     const output = w[1];
 
-            assert.ok(output == 1);
-        })
+        //     assert.ok(output == 1);
+        // })
     
     })
 }

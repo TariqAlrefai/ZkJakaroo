@@ -51,3 +51,12 @@ template IsNotZero() {
     
     in*out === 0;
 }
+
+template and() {
+    signal input a;
+    signal input b;
+    signal output out;
+
+    out <== a*b;
+}
+
