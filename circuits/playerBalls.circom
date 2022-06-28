@@ -36,6 +36,7 @@ template onlyPlayerBalls(){
     Or.in[3] <== Eq3.out;
 
     output0 <== Or.out;
+    // log(output0);
 }
 
 

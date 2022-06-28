@@ -23,7 +23,7 @@ template jakaroo(){
     // Normal signal
     signal new_playground[16];
     signal new_players_cards[5];
-    signal base_playground[16];
+    signal back_playground[16];
     signal winning_playground[16];
 
     // signal output new_cards_commit;
@@ -73,7 +73,6 @@ template jakaroo(){
         for (var i=0; i<16; i++){
             mux4.c[i] <== i;
             
-
         }
 
         for (var i=0; i<4; i++){
@@ -112,36 +111,36 @@ template jakaroo(){
         var a = 4;
         var b = 8;
         var c = 12;
-    
+
         for (var i=0; i<4; i++){
             IsEqual_P1[i] = IsEqual();
             IsEqual_P1[i].in[0] <== playground[i];
             IsEqual_P1[i].in[1] <== 100;
-            (IsEqual_P1[i].out) ==> base_playground[i];
+            (IsEqual_P1[i].out) ==> back_playground[i];
             
             IsEqual_P2[i] = IsEqual();
             IsEqual_P2[i].in[0] <== playground[a];
             IsEqual_P2[i].in[1] <== 100;
-            (IsEqual_P2[i].out)*19 ==> base_playground[a];
+            (IsEqual_P2[i].out)*19 ==> back_playground[a];
             a = a+1;
 
             IsEqual_P3[i] = IsEqual();
             IsEqual_P3[i].in[0] <== playground[b];
             IsEqual_P3[i].in[1] <== 100;
-            (IsEqual_P3[i].out)*37 ==> base_playground[b];
+            (IsEqual_P3[i].out)*37 ==> back_playground[b];
             b=b+1;
 
             IsEqual_P4[i] = IsEqual();
             IsEqual_P4[i].in[0] <== playground[c];
             IsEqual_P4[i].in[1] <== 100;
-            (IsEqual_P4[i].out)*55 ==> base_playground[c];
-            // log(base_playground[c]);
+            (IsEqual_P4[i].out)*55 ==> back_playground[c];
+            // log(back_playground[c]);
             c = c+1;
         }
         // for printing:
         for (var i=0; i<16; i++){
-            // log(playground[i]);
-            // log(base_playground[i]);
+            log(playground[i]);
+            // log(back_playground[i]);
         }
     
         component isequal_0[16];
@@ -176,9 +175,9 @@ template jakaroo(){
             isequal_1[i].in[1] <== mux4.out;
             // log(mux4.out);
             // check if the played card is king, the played ball is in base playground
-            // Isnotzero[i].in <== base_playground[i];
+            // Isnotzero[i].in <== back_playground[i];
             // check if in[0] > in[1]
-            greaterthan[i].in[0] <== base_playground[i]; 
+            greaterthan[i].in[0] <== back_playground[i]; 
             greaterthan[i].in[1] <== 0;
 
             // And[i].a <== Isnotzero[i].out;
@@ -188,14 +187,14 @@ template jakaroo(){
             And2[i].a <== And[i].out;
             And2[i].b <== isequal_0[i].out;
 
-            // log (greaterthan[i].out);
+            log (greaterthan[i].out);
             // log (isequal_1[i].out);
             // log (And[i].out);
 
             mux2[i].c[0] <== playground[i];                // s[1] = 0, s[0] = 0
             mux2[i].c[1] <== playground[i];                // s[1] = 0, s[0] = 1 
             mux2[i].c[2] <-- (playground[i]+ mux4.out)%74; // s[1] = 1, s[0] = 0
-            mux2[i].c[3] <== base_playground[i];           // s[1] = 1, s[0] = 1
+            mux2[i].c[3] <== back_playground[i];           // s[1] = 1, s[0] = 1
             
             mux2[i].s[1] <== isequal_0[i].out;
             mux2[i].s[0] <== And2[i].out; 
@@ -296,6 +295,10 @@ template jakaroo(){
             
     }
 
+    // mux for king
+
+    component mux_2[16];
+
     // Make sure it is the same playground as in smart contract
         // choose any hash function, then check if its correct with the current playground new_playground
         // then the hashed value store it in new_playground.
@@ -324,7 +327,7 @@ template jakaroo(){
         // hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
         
     for (var i=0; i<16; i++){
-        log(new_playground[i]);
+        // log(new_playground[i]);
     }
 }
 
