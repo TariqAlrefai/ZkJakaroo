@@ -9,6 +9,23 @@ include "../node_modules/circomlib/circuits/mux4.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
 include "../node_modules/circomlib/circuits/mux2.circom";
 
+
+function getPlayerStertPos(playerid){
+    if (playerid == 0){
+        return 0;
+    }
+    else if (playerid == 1){
+        return 19;
+    }
+    else if (playerid == 2){
+        return 37;
+    }
+    else if (playerid == 3){
+        return 55;
+    }
+    return 0;
+}
+
 template jakaroo(){
     signal input playerId; // To identify which player (No player can jumb above its own ball)
     signal input playground[16]; // one array for the player's balls
@@ -18,7 +35,6 @@ template jakaroo(){
     // signal input options; // Optional, depending on played card (1, 11)
     // signal input current_playground_commit; // hash of playground
     // signal input players_cards_commit;
-
 
     // Normal signal
     signal new_playground[16];
@@ -179,7 +195,15 @@ template jakaroo(){
             // check if in[0] > in[1]
             greaterthan[i].in[0] <== back_playground[i]; 
             greaterthan[i].in[1] <== 0;
-
+            assert(!(isequal_0[i].out && (greaterthan[i].out && !isequal_1[i].out))); // Don't move any non-played ball.
+            assert(!(isequal_0[i].out && (!greaterthan[i].out && isequal_1[i].out))); // King Dosen't move any played ball.
+            
+            for (var j=0;j<16;j++){
+                // log(playground[j]);
+                // log(isequal_0[i].out);
+                assert(!(getPlayerStertPos(playerId) != playground[j] && isequal_0[i].out && (greaterthan[i].out && isequal_1[i].out)));  // Make sure that no other balls in start position when played new ball
+            }
+            
             // And[i].a <== Isnotzero[i].out;
             And[i].a <== greaterthan[i].out;
             And[i].b <== isequal_1[i].out;
@@ -187,7 +211,7 @@ template jakaroo(){
             And2[i].a <== And[i].out;
             And2[i].b <== isequal_0[i].out;
 
-            log (greaterthan[i].out);
+            // log (greaterthan[i].out);
             // log (isequal_1[i].out);
             // log (And[i].out);
 
@@ -327,7 +351,7 @@ template jakaroo(){
         // hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
         
     for (var i=0; i<16; i++){
-        // log(new_playground[i]);
+        log(new_playground[i]);
     }
 }
 
