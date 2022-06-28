@@ -140,7 +140,7 @@ template jakaroo(){
         }
         // for printing:
         for (var i=0; i<16; i++){
-            log(playground[i]);
+            // log(playground[i]);
             // log(base_playground[i]);
         }
     
@@ -150,20 +150,21 @@ template jakaroo(){
         component greaterthan[16];
         component And[16];
         component Isnotzero[16];
+        component And2[16];
         
         for(var i = 0; i < 16; i++){
-            mux2[i]      = Mux2();
-            isequal_0[i]   = IsEqual();
-            isequal_1[i]   = IsEqual();
+            mux2[i] = Mux2();
+            isequal_0[i] = IsEqual();
+            isequal_1[i] = IsEqual();
             Isnotzero[i] = IsNotZero();
-            And[i]       = and();
+            And[i] = and();
             greaterthan[i] = GreaterThan(18);
+            And2[i] = and();
         }
         // four options for this: 
             // 1. & 2. are negalgable.
             // 3. doing the chaings in playground.
             // 4. the card is king & playble ball is in base playground.
-         
         var changing_pos;
         for (var i = 0; i < 16; i++){
 
@@ -176,15 +177,20 @@ template jakaroo(){
             // log(mux4.out);
             // check if the played card is king, the played ball is in base playground
             // Isnotzero[i].in <== base_playground[i];
-            greaterthan[i].in[0] <== base_playground[i];
+            // check if in[0] > in[1]
+            greaterthan[i].in[0] <== base_playground[i]; 
             greaterthan[i].in[1] <== 0;
 
             // And[i].a <== Isnotzero[i].out;
             And[i].a <== greaterthan[i].out;
             And[i].b <== isequal_1[i].out;
+            
+            And2[i].a <== And[i].out;
+            And2[i].b <== isequal_0[i].out;
+
             // log (greaterthan[i].out);
             // log (isequal_1[i].out);
-            log (And[i].out);
+            // log (And[i].out);
 
             mux2[i].c[0] <== playground[i];                // s[1] = 0, s[0] = 0
             mux2[i].c[1] <== playground[i];                // s[1] = 0, s[0] = 1 
@@ -192,14 +198,14 @@ template jakaroo(){
             mux2[i].c[3] <== base_playground[i];           // s[1] = 1, s[0] = 1
             
             mux2[i].s[1] <== isequal_0[i].out;
-            mux2[i].s[0] <== And[i].out; 
+            mux2[i].s[0] <== And2[i].out; 
 
             mux2[i].out ==> new_playground[i];
 
             // log(mux2[/
             // log(Isequal[i].out);
             // log(playground[i]);
-        
+
         }
 
             // log(mux2[0].c[2]);
