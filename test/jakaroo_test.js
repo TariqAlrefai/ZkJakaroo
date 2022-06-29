@@ -31,7 +31,7 @@ async function tester(){
                 playerId: 3,
                 playground: [20,100,100,100,100,100,100,100,100,100,100,100,100,100,100,55],
                 players_cards: [8,9,13,11,13],
-                player_card:2, 
+                player_card:1, 
                 played_ball:14, // 0|1|2|3
             });
             // console.log("============== Witness ==============")

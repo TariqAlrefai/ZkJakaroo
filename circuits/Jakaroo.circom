@@ -201,7 +201,7 @@ template jakaroo(){
             for (var j=0;j<16;j++){
                 // log(playground[j]);
                 // log(isequal_0[i].out);
-                assert(!(getPlayerStertPos(playerId) != playground[j] && isequal_0[i].out && (greaterthan[i].out && isequal_1[i].out)));  // Make sure that no other balls in start position when played new ball
+                // assert(!(getPlayerStertPos(playerId) != playground[j] && isequal_0[i].out && (greaterthan[k].out && isequal_1[i].out)));  // Make sure that no other balls in start position when played new ball
             }
             
             // And[i].a <== Isnotzero[i].out;
