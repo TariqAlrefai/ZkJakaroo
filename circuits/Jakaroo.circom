@@ -32,9 +32,35 @@ template jakaroo(){
     signal input players_cards[5];
     signal input player_card;
     signal input played_ball;
-    // signal input options; // Optional, depending on played card (1, 11)
+    signal input options[1]; // Optional, depending on played card (1, 11) [burn]
     // signal input current_playground_commit; // hash of playground
     // signal input players_cards_commit;
+    signal output new_playground_out[16];
+    signal output new_cards_commit[5];
+
+    signal burn <== options[0];
+    assert( ((1-burn) * burn) == 0); // Make sure burn is either 0 or 1
+
+    // Assert input cards is between 0 & 13
+    for(var i=0; i<5; i++){
+        assert(players_cards[i] >= 0 && players_cards[i] <= 13);
+    }
+
+    // Assert burnign non-burnale King
+    if(burn && players_cards[player_card] == 13){
+        for(var i=playerId*4; i<playerId*4+4; i++){
+            assert(playground[i] != 100);
+        }
+    }
+    
+    // Assert burning non-burnable Normal
+    if(burn && players_cards[player_card] != 13){
+        for(var i=playerId*4; i<playerId*4+4; i++){
+            assert(playground[i] == 100 || playground[i] == 200); // 200 is the winning area
+        }
+    }
+
+
 
     // Normal signal
     signal new_playground[16];
@@ -42,8 +68,6 @@ template jakaroo(){
     signal back_playground[16];
     signal winning_playground[16];
 
-    // signal output new_cards_commit;
-    signal output new_playground_out[16];
     // signal output new_playground_commit; // might not be needed
 
     // Extract the card and make sure it is not an empty card slot
@@ -54,35 +78,21 @@ template jakaroo(){
         rangeCard.range[0] <== 0;
         rangeCard.range[1] <== 4;
         rangeCard.out === 1;
-        
-        // component notZero = IsNotZero();
-        
-        // notZero.in <-- players_cards[player_card];
-        // notZero.out === 0; 
 
-
-        // His ball is in playground (not in 0 or in winning place)
-        // component rangeBall = RangeProof(16);
-        // rangeBall.in <-- playground[played_ball];
-        // rangeBall.range[0] <== 0;
-        // rangeBall.range[1] <== 73;
-        // rangeBall.out === 1;
-
-        
-    // Make sure player plays his own ball
+        // Make sure player plays his own ball
         component only_player_balls = onlyPlayerBalls();
         only_player_balls.playerId <== playerId;
         only_player_balls.played_ball <== played_ball;
         only_player_balls.output0 === 1; 
         
-// Determine card functionality     
-    // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12
+        // Determine card functionality     
+        // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12
 
-    // Mux4 will be responsable for choosen cards.
+        // Mux4 will be responsable for choosen cards.
         component selector = playingCards();
         selector.player_card <== player_card;
         for (var i=0; i<5; i++){
-        selector.players_cards[i] <== players_cards[i];
+            selector.players_cards[i] <== players_cards[i];
         }
         component mux4 = Mux4();
         
@@ -137,109 +147,110 @@ template jakaroo(){
             IsEqual_P2[i] = IsEqual();
             IsEqual_P2[i].in[0] <== playground[a];
             IsEqual_P2[i].in[1] <== 100;
-            (IsEqual_P2[i].out)*19 ==> back_playground[a];
+            (IsEqual_P2[i].out)*(19+1) ==> back_playground[a];
             a = a+1;
 
             IsEqual_P3[i] = IsEqual();
             IsEqual_P3[i].in[0] <== playground[b];
             IsEqual_P3[i].in[1] <== 100;
-            (IsEqual_P3[i].out)*37 ==> back_playground[b];
+            (IsEqual_P3[i].out)*(37+1) ==> back_playground[b];
             b=b+1;
 
             IsEqual_P4[i] = IsEqual();
             IsEqual_P4[i].in[0] <== playground[c];
             IsEqual_P4[i].in[1] <== 100;
-            (IsEqual_P4[i].out)*55 ==> back_playground[c];
-            // log(back_playground[c]);
+            (IsEqual_P4[i].out)*(55+1) ==> back_playground[c];
             c = c+1;
         }
         // for printing:
         for (var i=0; i<16; i++){
-            log(playground[i]);
+            // log(playground[i]);
             // log(back_playground[i]);
         }
     
-        component isequal_0[16];
+        component isThePlayedBall[16];
         component mux2[16];
-        component isequal_1[16];
-        component greaterthan[16];
+        component cardIsKing[16];
+        component isBallInHive[16];
         component And[16];
         component Isnotzero[16];
         component And2[16];
+        component playedBallAndnotBurn[16];
         
         for(var i = 0; i < 16; i++){
             mux2[i] = Mux2();
-            isequal_0[i] = IsEqual();
-            isequal_1[i] = IsEqual();
+            isThePlayedBall[i] = IsEqual();
+            cardIsKing[i] = IsEqual();
             Isnotzero[i] = IsNotZero();
             And[i] = and();
-            greaterthan[i] = GreaterThan(18);
+            isBallInHive[i] = GreaterThan(18);
             And2[i] = and();
         }
         // four options for this: 
-            // 1. & 2. are negalgable.
-            // 3. doing the chaings in playground.
-            // 4. the card is king & playble ball is in base playground.
+        // 1. & 2. are negalgable.
+        // 3. doing the chaings in playground.
+        // 4. the card is king & playble ball is in base playground.
         var changing_pos;
         for (var i = 0; i < 16; i++){
 
             // make sure this is the played ball that we are using.
-            isequal_0[i].in[0] <== played_ball; 
-            isequal_0[i].in[1] <== i;           
+            isThePlayedBall[i].in[0] <== played_ball; 
+            isThePlayedBall[i].in[1] <== i;           
             // check if this a King card or not.
-            isequal_1[i].in[0] <== 13;          
-            isequal_1[i].in[1] <== mux4.out;
-            // log(mux4.out);
-            // check if the played card is king, the played ball is in base playground
-            // Isnotzero[i].in <== back_playground[i];
-            // check if in[0] > in[1]
-            greaterthan[i].in[0] <== back_playground[i]; 
-            greaterthan[i].in[1] <== 0;
-            assert(!(isequal_0[i].out && (greaterthan[i].out && !isequal_1[i].out))); // Don't move any non-played ball.
-            assert(!(isequal_0[i].out && (!greaterthan[i].out && isequal_1[i].out))); // King Dosen't move any played ball.
+            cardIsKing[i].in[0] <== 13;          
+            cardIsKing[i].in[1] <== mux4.out;
+
+            isBallInHive[i].in[0] <== back_playground[i]; 
+            isBallInHive[i].in[1] <== 0;
+            //                                  
+            
+            assert((!isThePlayedBall[i].out) || 
+                   ( isBallInHive[i].out &&  cardIsKing[i].out) || 
+                   (!isBallInHive[i].out && !cardIsKing[i].out) || 
+                   burn); // Don't move any non-played ball.
+            /*
+                isBallInHive | cardIsKing | R
+                0|0 F
+                0|1 F
+                1|0 -> T
+                1|1 F
+            */
+            //       index@played ball     Ball out of base        The played card is King
+            // assert(!(isThePlayedBall[i].out   && (!isBallInHive[i].out && cardIsKing[i].out))      || burn); // King Dosen't move any playable ball.
+            // assert((!isThePlayedBall[i].out)   || (!isBallInHive[i].out && cardIsKing[i].out)      || burn); // King Dosen't move any playable ball.
+            //0 
+            //1
+            //-2
+            //3
+            //4
             
             for (var j=0;j<16;j++){
                 // log(playground[j]);
-                // log(isequal_0[i].out);
-                // assert(!(getPlayerStertPos(playerId) != playground[j] && isequal_0[i].out && (greaterthan[k].out && isequal_1[i].out)));  // Make sure that no other balls in start position when played new ball
+                // log(isThePlayedBall[i].out);
+                // assert(!(getPlayerStertPos(playerId) != playground[j] && isThePlayedBall[i].out && (isBallInHive[k].out && cardIsKing[i].out)));  // Make sure that no other balls in start position when played new ball
             }
-            
+
             // And[i].a <== Isnotzero[i].out;
-            And[i].a <== greaterthan[i].out;
-            And[i].b <== isequal_1[i].out;
+            And[i].a <== isBallInHive[i].out;
+            And[i].b <== cardIsKing[i].out;
             
             And2[i].a <== And[i].out;
-            And2[i].b <== isequal_0[i].out;
-
-            // log (greaterthan[i].out);
-            // log (isequal_1[i].out);
-            // log (And[i].out);
+            And2[i].b <== isThePlayedBall[i].out;
+            
+            playedBallAndnotBurn[i] = and();
+            playedBallAndnotBurn[i].a <== isThePlayedBall[i].out;
+            playedBallAndnotBurn[i].b <== 1-burn; // Not burn
 
             mux2[i].c[0] <== playground[i];                // s[1] = 0, s[0] = 0
             mux2[i].c[1] <== playground[i];                // s[1] = 0, s[0] = 1 
             mux2[i].c[2] <-- (playground[i]+ mux4.out)%74; // s[1] = 1, s[0] = 0
-            mux2[i].c[3] <== back_playground[i];           // s[1] = 1, s[0] = 1
+            mux2[i].c[3] <== back_playground[i]-1;           // s[1] = 1, s[0] = 1
             
-            mux2[i].s[1] <== isequal_0[i].out;
+            mux2[i].s[1] <== playedBallAndnotBurn[i].out;
             mux2[i].s[0] <== And2[i].out; 
 
             mux2[i].out ==> new_playground[i];
-
-            // log(mux2[/
-            // log(Isequal[i].out);
-            // log(playground[i]);
-
         }
-
-            // log(mux2[0].c[2]);
-            // log(mux2[0].s[0]);
-            // log(mux2[0].s[1]);
-            // log(mux2[0].out);
-            
-        // for printing:
-
-
-
 
 // Check winning
 
@@ -311,17 +322,41 @@ template jakaroo(){
             mux_P4[i].out  ==> new_playground_out[u];
             u = u+1;
             
-        // winning balls => 200, 300, 400, 500. 
-            // log(new_playground[12]);
-            // log(new_playground[13]);
-            // log(new_playground[14]);
-            // log(new_playground[15]);
-            
     }
 
     // mux for king
 
     component mux_2[16];
+
+    signal new_cards[5];
+    component deletePlayedCard = DeletePlayedCard();
+    deletePlayedCard.played_card <== player_card;
+    for(var i=0; i<5; i++){
+        deletePlayedCard.old_cards[i] <== players_cards[i];
+    }
+
+    for(var i=0; i<5; i++){
+        new_cards_commit[i] <== deletePlayedCard.new_cards[i];
+    }
+    
+    for (var i=0; i<16; i++){
+        // log(new_playground[i]);
+    }
+}
+
+
+component main = jakaroo();
+
+// circom tester => read circom to feed inputs. 
+// Card function => King
+// Card shuffling => smart contract
+// Generate Solidity & Wasm + power of tau, proof, .... etc.. . 
+// connecting of four wallets. 
+// Deployment on test net. 
+// writing readme + record a video. 
+// checking if the ball in winning game or not. 
+
+
 
     // Make sure it is the same playground as in smart contract
         // choose any hash function, then check if its correct with the current playground new_playground
@@ -349,20 +384,3 @@ template jakaroo(){
         //     hashPoseidon3.inputs[i] <== new_players_cards[i];
         // }
         // hashPoseidon3.out ==> new_cards_commit; // The new cards commit should goes here
-        
-    for (var i=0; i<16; i++){
-        log(new_playground[i]);
-    }
-}
-
-
-component main = jakaroo();
-
-// circom tester => read circom to feed inputs. 
-// Card function => King
-// Card shuffling => smart contract
-// Generate Solidity & Wasm + power of tau, proof, .... etc.. . 
-// connecting of four wallets. 
-// Deployment on test net. 
-// writing readme + record a video. 
-// checking if the ball in winning game or not. 

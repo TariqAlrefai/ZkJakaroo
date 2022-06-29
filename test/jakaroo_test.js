@@ -24,75 +24,201 @@ async function tester(){
 
     describe("Jakaroo Test", async ()=>{
        
-        it("Player 1 only move his balls", async ()=>{
-
+        it("Move a ball in the playground", async ()=>{
             const circuit = await wasm_tester(PATH1);
             const w = await circuit.calculateWitness({
                 playerId: 3,
                 playground: [20,100,100,100,100,100,100,100,100,100,100,100,100,100,100,55],
                 players_cards: [8,9,13,11,13],
                 player_card:1, 
-                played_ball:14, // 0|1|2|3
+                played_ball:15, 
+                options: [0]
             });
-            // console.log("============== Witness ==============")
-            // console.log(w);
 
-            // INPUT:
-                // playground -> w[20:35]
-                // players_cards -> w[]
-                // player_card -> w[]
-                // playebl_ball -> w[36]
-            // OUTPUT: 
-                // New playground -> w[37:52]
-                
-                // console.log(w);
-                // console.log(w[2],w[37],w[38],w[52]);
-                // const output = w[1];
-        })
-        
-        // it("Player only withdraw from his 5 cards", async ()=>{
+            const new_playground = w.slice(1,17);
+            const new_cards = w.slice(17,22);
+            // console.log(new_playground);
+            assert.ok(new_playground[15] == 64);
+            assert.ok(new_cards[1] == 0, "Played card didn't change to zero");
+        }); 
 
-        //     const circuit = await wasm_tester(PATH1);
-        //     const w = await circuit.calculateWitness({
-        //         playerId: 0,
-        //         playground: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
-        //         players_cards: [8,9,10,11,12],
-        //         player_card:4, // 0 -> 4
-        //         played_ball:2, // 0|1|2|3
-        //     });
-        // })
-        
-        // it("Player 1 winning area", async ()=>{
+        it("Place a ball for player one.", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+            const w = await circuit.calculateWitness({
+                playerId: 0,
+                playground: [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],
+                players_cards: [8,9,13,11,13],
+                player_card:2, 
+                played_ball:0, 
+                options: [0]
+            });
 
-        //     const circuit = await wasm_tester(PATH1);
-        //     const w = await circuit.calculateWitness({
-        //         playerId: 0,
-        //         playground: [72,73,71,73,4,5,6,7,8,9,10,11,12,13,14,15],
-        //         players_cards: [1,9,10,11,12],
-        //         player_card:0, // 0 -> 4
-        //         played_ball:2, // 0|1|2|3
-        //     });
-        //     const output = w[1] && w[2] && w[3] && w[4];
 
-        //     assert.ok(output == 1);
-        // })
+            const new_playground = w.slice(1,17);
+            const new_cards = w.slice(17,22);
+            // console.log(new_playground);
+            assert.ok(new_playground[0] == 0);
+            assert.ok(new_cards[2] == 0, "Played card didn't change to zero");
+        });
 
-        // it("Player 1 moving to winning area", async ()=>{
+        it("Try to move unplaced ball (false)", async ()=>{
+            const circuit = await wasm_tester(PATH1);
 
-        //     const circuit = await wasm_tester(PATH1);
-        //     const w = await circuit.calculateWitness({
-        //         playerId: 0,
-        //         playground: [60,57,52,49,4,5,6,7,8,9,10,11,12,13,14,15],
-        //         players_cards: [8,9,10,11,12],
-        //         player_card:4, // 0 -> 4
-        //         played_ball:0, // 0|1|2|3
-        //     });
-        //     const output = w[1];
+            try {
+                const w = await circuit.calculateWitness({
+                    playerId: 3,
+                    playground: [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],
+                    players_cards: [8,9,13,11,13],
+                    player_card:0, 
+                    played_ball:12, 
+                    options: [0]
+                });
+                assert.ok(false);
+            } catch (error) {
+                assert.ok(true);
+            }
+        });
 
-        //     assert.ok(output == 1);
-        // })
-    
-    })
+        it("Try to place a placed ball (false)", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            try {
+                const w = await circuit.calculateWitness({
+                    playerId: 1,
+                    playground: [100,100,100,100,25,26,100,100,100,100,100,100,100,100,100,100],
+                    players_cards: [8,9,13,11,13],
+                    player_card:2, 
+                    played_ball:5, 
+                    options: [0]
+                });
+                assert.ok(false);
+            } catch (error) {
+                assert.ok(true);
+            }
+        });
+
+        it("Try to place a ball when there is another ball in the start location (false)", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            try {
+                const w = await circuit.calculateWitness({
+                    playerId: 1,
+                    playground: [100,100,19,100,100,100,100,100,100,100,100,100,100,100,100,100],
+                    players_cards: [8,9,13,11,13],
+                    player_card:2, 
+                    played_ball:4, 
+                    options: [0]
+                });
+                assert.ok(false);
+            } catch (error) {
+                assert.ok(true);
+            }
+        });
+
+        it("Try to play a zero card (false)", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            try {
+                const w = await circuit.calculateWitness({
+                    playerId: 1,
+                    playground: [100,100,19,100,20,100,100,100,100,100,100,100,100,100,100,100],
+                    players_cards: [8,9,0,11,13],
+                    player_card:2, 
+                    played_ball:4, 
+                    options: [0]
+                });
+                assert.ok(false);
+            } catch (error) {
+                assert.ok(true);
+            }
+        });
+
+        it("Try to play a card greater than 13 (false)", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            try {
+                const w = await circuit.calculateWitness({
+                    playerId: 1,
+                    playground: [100,100,19,100,20,100,100,100,100,100,100,100,100,100,100,100],
+                    players_cards: [15,9,0,11,13],
+                    player_card:1, 
+                    played_ball:4, 
+                    options: [0]
+                });
+                assert.ok(false);
+            } catch (error) {
+                assert.ok(true);
+            }
+        });
+
+        it("Burn a king card", async ()=>{
+            
+            const circuit = await wasm_tester(PATH1);
+            
+            const w = await circuit.calculateWitness({
+                playerId: 1,
+                playground: [100,100,19,100,20,23,25,30,100,100,100,100,100,100,100,100],
+                players_cards: [0,0,0,13,13],
+                player_card:3, 
+                played_ball:4, 
+                options: [1]
+            });
+            
+            const new_cards = w.slice(17,22);
+            assert.ok(new_cards[3] == 0, "Played card didn't change to zero");
+            
+        });
+
+        it("Burn a normal card", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            const w = await circuit.calculateWitness({
+                playerId: 2,
+                playground: [100,100,19,100,20,100,100,100,100,100,100,100,100,100,100,100],
+                players_cards: [12,9,0,11,1],
+                player_card:1, 
+                played_ball:8, 
+                options: [1]
+            });
+
+            const new_cards = w.slice(17,22);
+            assert.ok(new_cards[1] == 0, "Played card didn't change to zero");
+            
+        });
+
+        it("Burn a non-burnable king card ", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            // try {
+                const w = await circuit.calculateWitness({
+                    playerId: 0,
+                    playground: [10,23,19,11,20,100,100,100,100,100,100,100,100,100,100,100],
+                    players_cards: [0,0,0,13,13],
+                    player_card:3, 
+                    played_ball:1, 
+                    options: [1]
+                });
+                assert(false);
+            // } catch (error) {
+            //     assert(error);
+            // }
+        });
+
+        it("Burn a non-burnable normal card ", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            const w = await circuit.calculateWitness({
+                playerId: 1,
+                playground: [100,100,19,100,10,13,100,100,100,100,100,100,100,100,100,100],
+                players_cards: [3,9,0,11,10],
+                player_card:1, 
+                played_ball:4, 
+                options: [1]
+            });
+            assert.ok(false);
+            
+        });
+    });
 }
 
 
