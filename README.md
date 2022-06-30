@@ -6,13 +6,12 @@
 ## Game rules
 
 ### Card Functionality
-  1. Normal Cards: 2,3,6,7,8,9,10 are just moving the balls step forward according to thier value.
-  2. Card no. 4: moving the ball backword.
-  3. Card no. 5: moving any ball in playground 5 step forward (even other's ball).
-  4. King Card K: ONLY using this for placing new ball.
-  5. Queen Card Q: moving ball forward for 12 steps.
-  6. Jack Card J: Used to replace player ball with another ball (to get closer to winning area).
-  7. Ace Card A: Used to either place a ball or move 1 or 11.
+  **1. Normal Cards:** 2,3,5,6,7,8,9,10 are moving the balls step forward according to thier value.
+  **2. Card no. 4:** moving the ball backword.
+  **3. King Card K:** ONLY using this for placing new ball.
+  **4. Queen Card Q:** moving ball forward for 12 steps.
+  **5. Jack Card J:** moving ball backword 11 steps.
+  **6. Ace Card A:** moving ball forward 11 steps 11.
 
 ### The Plaground
 
