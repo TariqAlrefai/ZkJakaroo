@@ -4,8 +4,10 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [How to run]()
-  - [circuits](#circuits)
-- [Zero Knowledge Structure](#zero-knowledge-structure)
+- [Project Structure]()
+  - [circuits]()
+  - [contracts]()
+  - [front-end]()
 - [Game rules]()
   - [Card Functionality]()
   - [The Plaground]()
