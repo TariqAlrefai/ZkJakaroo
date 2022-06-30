@@ -1,7 +1,7 @@
 # Jakaroo Game
 
 ## How to run
-
+W
 
 ## Game rules
 
