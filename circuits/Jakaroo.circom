@@ -35,6 +35,7 @@ template jakaroo(){
     // signal input players_cards_commit;
     signal output new_playground_out[16];
     signal output new_cards_commit[5];
+    
 
     signal burn <== options[0];
     assert( ((1-burn) * burn) == 0); // Make sure burn is either 0 or 1
@@ -64,6 +65,7 @@ template jakaroo(){
     signal new_players_cards[5];
     signal hive[16];
     signal winning_playground[16];
+    signal new_cards[5];
 
     // signal output new_playground_commit; // might not be needed
 
@@ -119,9 +121,10 @@ template jakaroo(){
         }
 
         // four options for this: 
-        // 1. & 2. are negalgable.
-        // 3. doing the chaings in playground.
-        // 4. the card is king & playble ball is in base playground.
+            // 1. & 2. are negalgable.
+            // 3. doing the chaings in playground.
+            // 4. the card is king & playble ball is in base playground.
+            
         var changing_pos;
         for (var i = 0; i < 16; i++){
 
@@ -257,7 +260,6 @@ template jakaroo(){
     // mux for king
     component mux_2[16];
 
-    signal new_cards[5];
     component deletePlayedCard = DeletePlayedCard();
     deletePlayedCard.played_card <== player_card;
     for(var i=0; i<5; i++){
@@ -279,8 +281,6 @@ component main = jakaroo();
 // Deployment on test net. 
 // writing readme + record a video. 
 // checking if the ball in winning game or not. 
-
-
 
     // Make sure it is the same playground as in smart contract
         // choose any hash function, then check if its correct with the current playground new_playground
