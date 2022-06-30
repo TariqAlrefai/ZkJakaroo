@@ -1,5 +1,20 @@
 # Jakaroo Game
 
+
+## Table of Contents <!-- omit in toc -->
+
+- [How to run]()
+  - [circuits](#circuits)
+- [Zero Knowledge Structure](#zero-knowledge-structure)
+- [Game rules]()
+  - [Card Functionality]()
+  - [The Plaground]()
+- [Game Screen]()
+- [How to Win?]()
+- [Things to be Noted]()
+
+
+
 ## How to run
 
 
@@ -21,4 +36,4 @@
 ## How to Win?
 
 
-## Things to NotedV
+## Things to be Noted
