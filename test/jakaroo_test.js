@@ -1,21 +1,11 @@
 
 const wasm_tester = require("circom_tester").wasm;
-// const c_tester = require("circom_tester").c;
 const assert = require("assert");
+const { expect } = require("chai");
 
-// const {Float32Bytes2Number, Number2Float32Bytes, f32Mul} = require("../lib/float-circom.js");
-// const Number2Float32Bytes = require("../src/floatCircom.js");
-// import {Number2Float32Bytes, Float32Bytes2Number} from "../src/float-circom.mjs";
 
 const PATH1 = "./circuits/Jakaroo.circom";
 const PATH2 = "./circuits/playerBalls.circom";
-// const ADD_PATH = "./circuits/test_circuits/add.circom";
-// const LESSTHAN_PATH = "./circuits/test_circuits/LessThan.circom";
-// const GREATERTHAN_PATH = "./circuits/test_circuits/GreaterThan.circom";
-// const INRANGE_PATH = "./circuits/test_circuits/InRange.circom";
-// const ISEQUAL_PATH = "./circuits/test_circuits/isEqual.circom";
-// const I2F_PATH = "./circuits/test_circuits/i2f.circom";
-
 
 async function tester(){
     // beforeEach(function (tester) {
@@ -64,6 +54,7 @@ async function tester(){
         it("Try to move unplaced ball (false)", async ()=>{
             const circuit = await wasm_tester(PATH1);
 
+            expect.assertions()
             try {
                 const w = await circuit.calculateWitness({
                     playerId: 3,
@@ -216,6 +207,21 @@ async function tester(){
                 options: [1]
             });
             assert.ok(false);
+            
+        });
+
+        it("Try to move a ball on another ball ", async ()=>{
+            const circuit = await wasm_tester(PATH1);
+
+            const w = await circuit.calculateWitness({
+                playerId: 1,
+                playground: [100,100,19,100,10,13,100,100,100,100,100,100,100,100,100,100],
+                players_cards: [3,9,0,11,10],
+                player_card:1, 
+                played_ball:4, 
+                options: [0]
+            });
+            // assert.ok(false);
             
         });
     });

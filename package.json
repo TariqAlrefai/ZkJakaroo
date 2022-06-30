@@ -18,7 +18,8 @@
   "homepage": "https://github.com/TariqAlrefai/ZkJakaroo#readme",
   "dependencies": {
     "circom_tester": "^0.0.14",
-    "circomlib": "^2.0.4"
+    "circomlib": "^2.0.4",
+    "jest": "^28.1.2"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
@@ -29,5 +30,4 @@
     "hardhat": "^2.9.9",
     "mocha": "^10.0.0"
   }
-
 }

@@ -185,6 +185,12 @@ template jakaroo(){
             mux2[i].s[0] <== And2[i].out; 
 
             mux2[i].out ==> new_playground[i];
+
+            if(!mux2[i].s[0] && mux2[i].s[1]){
+                for(var j=0; j<16; j++){
+                    assert(mux2[i].out != playground[j]);
+                }
+            }
         }
 
     	// Check winning
