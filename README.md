@@ -16,6 +16,7 @@
 - [Game Screen]()
 - [How to Win?]()
 - [Things to be Noted]()
+- [Game Algorithm]()
 
 
 
@@ -80,9 +81,8 @@ Four players compute to place their balls in the playground, then to complete on
       * **You must specify that you need to burn**: Once you have to burn a card, you must specify that you will burn a card, there are two values for burnning, 0: for playing normal, 1: to burn a card. 
 
 
-
-
-
+## Game Algorithm
+<img src="https://i.ibb.co/WnLnSft/Block-Diagram.png">
 
 # Don't delete for now tariq, I will do later
 ## Basic Sample Hardhat Project
