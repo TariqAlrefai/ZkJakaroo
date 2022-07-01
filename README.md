@@ -71,6 +71,14 @@ Four players compute to place their balls in the playground, then to complete on
 
 ## Things to be Noted 
   1. There is no difference beteween the type of the cards (Clubs, Diamonds, Hearts, Spades). 
+  2. You must play a playable card or burn your card, see some examples: 
+        
+      * **You have balls in hive**: you can only play the king to place your ball in base, if you don't have, you must burn any card you need. 
+  
+      * **You have a ball in playground**: you need to play a card to move your ball, you can't burn any movable card unless you can't move your ball (e.g it will over come another ball). 
+
+      * **You must specify that you need to burn**: Once you have to burn a card, you must specify that you will burn a card, there are two values for burnning, 0: for playing normal, 1: to burn a card. 
+
 
 
 
