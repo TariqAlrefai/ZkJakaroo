@@ -71,3 +71,24 @@ Four players compute to place their balls in the playground, then to complete on
 
 ## Things to be Noted 
   1. There is no difference beteween the type of the cards (Clubs, Diamonds, Hearts, Spades). 
+
+
+
+
+
+# Don't delete for now tariq, I will do later
+## Basic Sample Hardhat Project
+
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+
+Try running some of the following tasks:
+
+```shell
+npx hardhat accounts
+npx hardhat compile
+npx hardhat clean
+npx hardhat test
+npx hardhat node
+node scripts/sample-script.js
+npx hardhat help
+```

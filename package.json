@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npx mocha",
     "build": "bash ./scripts/compile-Jakaroo.sh",
-    "circom": "circom ./circuits/Jakaroo.circom"
+    "circom": "circom ./circuits/Jakaroo.circom",
+    "compile": "npx hardhat compile"
   },
   "repository": {
     "type": "git",
