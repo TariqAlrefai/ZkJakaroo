@@ -173,7 +173,7 @@ template jakaroo(){
 
             mux2[i].c[0] <== playground[i];                // s[1] = 0, s[0] = 0
             mux2[i].c[1] <== playground[i];                // s[1] = 0, s[0] = 1 
-            mux2[i].c[2] <-- (playground[i]+ PlayingCards.cardMove)%74; // s[1] = 1, s[0] = 0 // TODO: convert normal assignment to constrant generating assignment
+            mux2[i].c[2] <-- (playground[i]+ PlayingCards.cardMove)%74; // s[1] = 1, s[0] = 0 
             mux2[i].c[3] <== BallStatus.hive[i]-1;           // s[1] = 1, s[0] = 1
             
             mux2[i].s[1] <== playedBallAndnotBurn[i].out;
@@ -188,15 +188,16 @@ template jakaroo(){
                 }
             }
 
-                // Assert burning non-burnable Normal
-            if(burn && players_cards[player_card] != 13){
-                
-                for(var i=playerId*4; i<playerId*4+4; i++){
-                    assert(playground[i] == 100 || playground[i] == 200 ); // 200 is the winning area
-                }
-            }
         }
 
+        // Assert burning non-burnable Normal
+        if(burn && players_cards[player_card] != 13){
+            
+            for(var i=playerId*4; i<playerId*4+4; i++){
+                assert(playground[i] == 100 || playground[i] == 200 ); // 200 is the winning area
+            }
+        }
+        
     	// Check winning
 
     // winning balls => 200, 300, 400, 500. 
