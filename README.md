@@ -63,7 +63,7 @@ Four players compute to place their balls in the playground, then to complete on
 5. Players have to place all thier balls and move them to **winning area**.
 6. In the begnning, all four players has four balls in **Hive**
 
-<img src="https://i.ibb.co/7RZyrwX/JAKAROO-4-0.png">
+<img src="https://i.ibb.co/1QR126c/JAKAROO-5-0.png">
 
 ## Game Screen
 
