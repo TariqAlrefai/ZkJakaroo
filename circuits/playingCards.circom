@@ -11,7 +11,7 @@ template Num2Bits1(n) {
     var lc1=0;
 
     for (var i = 0; i<n; i++) {
-        out[i] <-- (in >> i) & 1;
+        out[i] <-- (in >> i) & 1; 
         out[i] * (out[i] -1 ) === 0;
         lc1 += out[i] * 2**i;
     }
@@ -25,7 +25,7 @@ template playingCards(){
     signal output cardMove; // Playing Card
     component converter2Bits = Num2Bits(4);
 
-    converter2Bits.in <-- players_cards[player_card];
+    converter2Bits.in <-- players_cards[player_card]; // TODO: convert normal assignment to constrant generating assignment
 
     // Determine card functionality     
         // Cards 1-1, 1-11, 2, 3, 4-b, 6, 7, 8, 9, 10, 12

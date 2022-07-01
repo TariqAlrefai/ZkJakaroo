@@ -52,12 +52,7 @@ template jakaroo(){
         }
     }
     
-    // Assert burning non-burnable Normal
-    if(burn && players_cards[player_card] != 13){
-        for(var i=playerId*4; i<playerId*4+4; i++){
-            assert(playground[i] == 100 || playground[i] == 200); // 200 is the winning area
-        }
-    }
+
 
 
     // Normal signal
@@ -72,7 +67,7 @@ template jakaroo(){
     // Extract the card and make sure it is not an empty card slot
         // check its value if it is value between 0,4 - then check the array index value not 0.
         component rangeCard = RangeProof(16);
-        rangeCard.in <-- player_card;
+        rangeCard.in <== player_card;
         rangeCard.range[0] <== 0;
         rangeCard.range[1] <== 4;
         rangeCard.out === 1;
@@ -178,7 +173,7 @@ template jakaroo(){
 
             mux2[i].c[0] <== playground[i];                // s[1] = 0, s[0] = 0
             mux2[i].c[1] <== playground[i];                // s[1] = 0, s[0] = 1 
-            mux2[i].c[2] <-- (playground[i]+ PlayingCards.cardMove)%74; // s[1] = 1, s[0] = 0
+            mux2[i].c[2] <-- (playground[i]+ PlayingCards.cardMove)%74; // s[1] = 1, s[0] = 0 // TODO: convert normal assignment to constrant generating assignment
             mux2[i].c[3] <== BallStatus.hive[i]-1;           // s[1] = 1, s[0] = 1
             
             mux2[i].s[1] <== playedBallAndnotBurn[i].out;
@@ -186,9 +181,18 @@ template jakaroo(){
 
             mux2[i].out ==> new_playground[i];
 
-            if(!mux2[i].s[0] && mux2[i].s[1]){
+            // Cehck that when a ball is moved it is not on another ball
+            if(!mux2[i].s[0] && mux2[i].s[1]){ 
                 for(var j=0; j<16; j++){
                     assert(mux2[i].out != playground[j]);
+                }
+            }
+
+                // Assert burning non-burnable Normal
+            if(burn && players_cards[player_card] != 13){
+                
+                for(var i=playerId*4; i<playerId*4+4; i++){
+                    assert(playground[i] == 100 || playground[i] == 200 ); // 200 is the winning area
                 }
             }
         }

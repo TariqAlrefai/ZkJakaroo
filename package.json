@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha"
+    "test": "npx mocha",
+    "build": "bash ./scripts/compile-Jakaroo.sh",
+    "circom": "circom ./circuits/Jakaroo.circom"
   },
   "repository": {
     "type": "git",

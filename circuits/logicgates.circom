@@ -45,7 +45,7 @@ template IsNotZero() {
 
     signal inv;
 
-    inv <-- in!=0 ? 1/in : 0;
+    inv <-- in!=0 ? 1/in : 0; 
 
     out <== -in*inv +1;
     
