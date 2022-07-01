@@ -3,7 +3,7 @@
 ## How to run
 W
 
-## Game rules
+#### Game rules
 
 ### Card Functionality
 
