@@ -55,6 +55,14 @@ Four players compute to place their balls in the playground, then to complete on
 <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Playing_card_club_A.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Playing_card_diamond_A.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Playing_card_spade_A.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Playing_card_heart_A.svg" width="80" height="100">
 
 ### The Plaground
+1. Playground consists of **73 postions**. 
+2. Each player has a base to place his ball in.
+3. Each player has a 4 postions for winning.
+4. Each player has 4 balls.
+5. Players have to place all thier balls and move them to **winning area**.
+6. In the begnning, all four players has four balls in **Hive**
+
+<img src="https://i.ibb.co/7RZyrwX/JAKAROO-4-0.png">
 
 ## Game Screen
 
