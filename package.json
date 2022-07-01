@@ -22,7 +22,9 @@
   "dependencies": {
     "circom_tester": "^0.0.14",
     "circomlib": "^2.0.4",
-    "jest": "^28.1.2"
+    "circomlibjs": "^0.1.6",
+    "jest": "^28.1.2",
+    "openzeppelin-solidity": "^4.6.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",

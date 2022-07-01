@@ -45,7 +45,7 @@ template jakaroo(){
         assert(players_cards[i] >= 0 && players_cards[i] <= 13);
     }
 
-    // Assert burnign non-burnale King
+    // Assert burning non-burnable King
     if(burn && players_cards[player_card] == 13){
         for(var i=playerId*4; i<playerId*4+4; i++){
             assert(playground[i] != 100);
@@ -197,7 +197,7 @@ template jakaroo(){
                 assert(playground[i] == 100 || playground[i] == 200 ); // 200 is the winning area
             }
         }
-        
+
     	// Check winning
 
     // winning balls => 200, 300, 400, 500. 
