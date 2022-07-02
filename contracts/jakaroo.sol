@@ -16,7 +16,7 @@ interface VerifyPlay {
     function verifyProof(uint[2] memory a, uint[2][2] memory b, uint[2] memory c, uint[21] memory input) external view returns (bool r);
 }
 
-contract Jakaroo {
+contract Jakaroo is Verifier{
     
     // Global Variables
     uint32 turnOn=0; // Who is the current turn for ?
@@ -24,6 +24,8 @@ contract Jakaroo {
     uint32 playCounter = 0;
 
     address[4] players;
+
+    
 
     enum JakarooStages {
         Joining, 
@@ -40,9 +42,16 @@ contract Jakaroo {
         GameEnd
     }
 
-    JakarooStages currentStage;
+    JakarooStages currentStage = JakarooStages.Player1_Turn;
     modifier CheckStage(JakarooStages stage) {
         require(currentStage == stage, "Trying to run function you are not allowed to run");
+        _;
+    }
+
+    JakarooStages stagePlayer = JakarooStages.Player1_Turn;
+    modifier CheckStages {
+        
+        require(currentStage == stagePlayer, "Trying to run function you are not allowed to run");
         _;
     }
 
@@ -68,18 +77,27 @@ contract Jakaroo {
     
     // Events
     event NewPlayEvent(uint indexed playCounter, uint round, uint playerId, uint playedCard);
-    event ThereIsWinner(uint32 playerId);
+    event ThereIsWinner(uint playerId);
     
     constructor(address[4] memory _players) {
         
+        for (uint i = 0; i < _players.length; i++) {
+            players[i] = _players[i];
+        }
     }
 
     function DistributeCards() public {
         
     }
 
-    function NewPlay() public CheckPlayer {
+    function NewPlay(
+        uint[2] memory a,
+        uint[2][2] memory b,
+        uint[2] memory c,
+        uint[21] memory input) public CheckPlayer CheckStages returns (bool r) {
+        
         // Verify player play
+        r = super.verifyProof(a, b, c, input);
 
         // Update structure
         uint[16] memory new_playground; // equal something
@@ -103,10 +121,69 @@ contract Jakaroo {
 
         // Increase player counter
         playCounter++;
+
+        if(currentStage == JakarooStages.Player1_Turn){
+            currentStage = JakarooStages.Player2_Turn;
+            stagePlayer = JakarooStages.Player2_Turn;
+        }
+        else if(currentStage == JakarooStages.Player2_Turn){
+            currentStage = JakarooStages.Player3_Turn;
+            stagePlayer = JakarooStages.Player3_Turn;
+        }
+        else if(currentStage == JakarooStages.Player3_Turn){
+            currentStage = JakarooStages.Player4_Turn;
+            stagePlayer = JakarooStages.Player4_Turn;
+        }
+        else if(currentStage == JakarooStages.Player4_Turn){
+            currentStage = JakarooStages.Player1_Turn;
+            stagePlayer = JakarooStages.Player1_Turn;
+        }
     }
 
-    function CheckWinner() public {
+    function CheckWinner(uint[16] memory playground) public returns (uint) {
         // Check for winner in playground array
         
+        bool win = false;
+        uint winnerId;
+        for(uint player=0; player<4; player++){
+            win = true;
+            winnerId = player;
+            for(uint ball=0; ball<4; ball++){
+                if(playground[player*4+ball] != 200){
+                    win = false;
+                    break;
+                }
+            }
+            if(win){
+                emit ThereIsWinner(winnerId); 
+                return winnerId;
+            }
+        }
+        return 5;
     }
+
+    function getTurn() public view returns (uint) {
+        return turnOn;
+    }
+
+    function getRound() public view returns (uint) {
+        return roundCounter;
+    }
+
+    function getPlayCounter() public view returns (uint) {
+        return playCounter;
+    }
+
+    function getCurrentStage() public view returns (JakarooStages) {
+        return currentStage;
+    }
+
+    function getStagePlayer() public view returns (JakarooStages) {
+        return stagePlayer;
+    }
+
+    function getPlayersAddresses() public view returns (address[4] memory) {
+        return players;
+    }
+
 }
