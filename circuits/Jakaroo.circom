@@ -35,6 +35,7 @@ template jakaroo(){
     // signal input players_cards_commit;
     signal output new_playground_out[16];
     signal output new_cards_commit[5];
+    signal output played_card;
     
 
     signal burn <== options[0];
@@ -281,9 +282,19 @@ template jakaroo(){
         new_cards_commit[i] <== deletePlayedCard.new_cards[i];
     }
     
+    played_card <== deletePlayedCard.card;
 }
 
-component main = jakaroo();
+component main { public [playerId, playground, options] } = jakaroo();
+/*
+    signal input playerId;         // public
+    signal input playground[16];   // public
+    signal input players_cards[5]; // private
+    signal input player_card;      // private
+    signal input played_ball;      // private
+    signal input options[1];       // public
+*/
+
 
 // circom tester => read circom to feed inputs. 
 // Card shuffling => smart contract

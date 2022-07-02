@@ -72,11 +72,12 @@ contract Jakaroo is Verifier{
                       100, 100, 100, 100,
                       100, 100, 100, 100];
     uint[4] cardsCommit = [0, 0, 0, 0];
+
     PlayGround playGround = PlayGround(balls, PoseidonT3.poseidon([uint256(0), uint256(0)]), cardsCommit);
 
     
     // Events
-    event NewPlayEvent(uint indexed playCounter, uint round, uint playerId, uint playedCard);
+    event NewPlayEvent(uint indexed playCounter, uint round, uint playerId, uint playedCard, uint burn);
     event ThereIsWinner(uint playerId);
     
     constructor(address[4] memory _players) {
@@ -94,22 +95,34 @@ contract Jakaroo is Verifier{
         uint[2] memory a,
         uint[2][2] memory b,
         uint[2] memory c,
-        uint[21] memory input) public CheckPlayer CheckStages returns (bool r) {
+        uint[40] memory input) public CheckPlayer CheckStages returns (bool r) {
         
         // Verify player play
         r = super.verifyProof(a, b, c, input);
+        require(r, "The proof is not correct");
 
         // Update structure
+        // Read input
+        uint cardCommit = stringToUint(input[20]); // Later will be 16
+        uint playedCard = stringToUint(input[21]); // Later will be 17
+        uint playerID   = strignToUint(input[22]); // Later will be 18
         uint[16] memory new_playground; // equal something
-        uint playedCard;
-        uint cardCommit;
+        for(uint i=0; i<16; i++){
+            new_playground[i] = stringToUint(input[i+23]); // Later will be 19
+        }
+        uint burn = stringToUint(input[39]); // Later will be 35
 
+
+        // require(playGround.players_cards_commit[turnOn] == )
         playGround.balls = new_playground;
         playGround.players_cards_commit[turnOn] = cardCommit;
 
-
         // Emit event
-        emit NewPlayEvent(playCounter, roundCounter, turnOn, playedCard);
+        emit NewPlayEvent(playCounter, roundCounter, playerID, playedCard, burn); // At the client side player shoudl read the last play ground
+
+        // Card Things shoudl be done here
+        //
+        // Card Things shoudl be done here
 
         // Increase roundCounter
         if(turnOn == 3){
@@ -184,6 +197,28 @@ contract Jakaroo is Verifier{
 
     function getPlayersAddresses() public view returns (address[4] memory) {
         return players;
+    }
+
+    function getPlayGround() public view returns (uint[16] memory){
+        return playGround.balls;
+    }
+
+    function stringToUint(string s) constant returns (uint result) {
+        bytes memory b = bytes(s);
+        uint result = 0;
+        bool success = false;
+        for (uint i = 0; i < b.length; i++) { 
+            if (b[i] >= 48 && b[i] <= 57) {
+                result = result * 10 + (uint(b[i]) - 48); 
+                success = true;
+            } else {
+                result = 0
+                success = false;
+                break;
+            }
+        } 
+        require(success, "Problem in data conversion");
+        return result;
     }
 
 }

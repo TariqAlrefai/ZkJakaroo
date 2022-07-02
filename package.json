@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha",
+    "test": "npx hardhat test",
     "build": "bash ./scripts/compile-Jakaroo.sh",
     "circom": "circom ./circuits/Jakaroo.circom",
     "compile": "npx hardhat compile"

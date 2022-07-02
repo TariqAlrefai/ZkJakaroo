@@ -1,5 +1,6 @@
 pragma circom 2.0.4;  
 include "../node_modules/circomlib/circuits/mux1.circom";
+include "../node_modules/circomlib/circuits/mux3.circom";
 include "../node_modules/circomlib/circuits/mux4.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
 
@@ -63,12 +64,14 @@ template DeletePlayedCard(){
     signal input old_cards[5];
     signal input played_card;
     signal output new_cards[5];
+    signal output card;
 
     component mux1[5];
     component isEqual[5];
     
     for(var i=0; i<5; i++){
         mux1[i] = Mux1();
+
         isEqual[i] = IsEqual();
         
         assert((played_card != i) || (played_card == i && old_cards[i] != 0));
@@ -80,6 +83,23 @@ template DeletePlayedCard(){
         mux1[i].s <== isEqual[i].out;
         new_cards[i] <== mux1[i].out;
     }
+
+    component mux3 = Mux3();
+    for(var i=0; i<5; i++){
+        mux3.c[i] <== old_cards[i];
+    }
+    for(var i=5; i<8; i++){
+        mux3.c[i] <== 0;
+    }
+    
+    component n2b = Num2Bits(3);
+    n2b.in <== played_card;
+    for(var i=0; i<3; i++){
+        mux3.s[i] <== n2b.out[i]; 
+    }
+
+    card <== mux3.out;
+    
 }
 
 
