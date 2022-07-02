@@ -4,18 +4,19 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [How to run]()
-- [Project Structure]()
-  - [circuits]() 
-  - [contracts]()
-    - [Card Distribution]()
-    - [Winning Stage]()
-  - [front-end]()
 - [Game description]()
   - [Card Functionality]()
   - [The Plaground]()
 - [Game Screen]()
 - [How to Win?]()
 - [Things to be Noted]()
+- [Game Algorithm]()
+- [Project Structure]()
+  - [circuits]() 
+  - [contracts]()
+    - [Card Distribution]()
+    - [Winning Stage]()
+  - [front-end]()
 
 
 
