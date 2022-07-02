@@ -193,7 +193,6 @@ template jakaroo(){
 
         // Assert burning non-burnable Normal
         if(burn && players_cards[player_card] != 13){
-            
             for(var i=playerId*4; i<playerId*4+4; i++){
                 assert(playground[i] == 100 || playground[i] == 200 ); // 200 is the winning area
             }

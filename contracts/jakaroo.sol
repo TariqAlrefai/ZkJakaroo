@@ -103,53 +103,59 @@ contract Jakaroo is Verifier{
 
         // Update structure
         // Read input
-        uint cardCommit = stringToUint(input[20]); // Later will be 16
-        uint playedCard = stringToUint(input[21]); // Later will be 17
-        uint playerID   = strignToUint(input[22]); // Later will be 18
+        uint cardCommit = input[20]; // Later will be 16
+        uint playedCard = input[21]; // Later will be 17
+        uint playerID   = input[22]; // Later will be 18
         uint[16] memory new_playground; // equal something
         for(uint i=0; i<16; i++){
-            new_playground[i] = stringToUint(input[i+23]); // Later will be 19
+            new_playground[i] = input[i+23]; // Later will be 19
         }
-        uint burn = stringToUint(input[39]); // Later will be 35
+        
+        uint win = CheckWinner(new_playground);
+        if(win == 1){
 
-
-        // require(playGround.players_cards_commit[turnOn] == )
-        playGround.balls = new_playground;
-        playGround.players_cards_commit[turnOn] = cardCommit;
-
-        // Emit event
-        emit NewPlayEvent(playCounter, roundCounter, playerID, playedCard, burn); // At the client side player shoudl read the last play ground
-
-        // Card Things shoudl be done here
-        //
-        // Card Things shoudl be done here
-
-        // Increase roundCounter
-        if(turnOn == 3){
-            roundCounter = (roundCounter+1)%3;
         }
+        else{
 
-        // Move the turn
-        turnOn = (turnOn+1)%4;
+            uint burn = input[39]; // Later will be 35
+            // require(playGround.players_cards_commit[turnOn] == )
+            playGround.balls = new_playground;
+            playGround.players_cards_commit[turnOn] = cardCommit;
 
-        // Increase player counter
-        playCounter++;
+            // Emit event
+            emit NewPlayEvent(playCounter, roundCounter, playerID, playedCard, burn); // At the client side player shoudl read the last play ground
 
-        if(currentStage == JakarooStages.Player1_Turn){
-            currentStage = JakarooStages.Player2_Turn;
-            stagePlayer = JakarooStages.Player2_Turn;
-        }
-        else if(currentStage == JakarooStages.Player2_Turn){
-            currentStage = JakarooStages.Player3_Turn;
-            stagePlayer = JakarooStages.Player3_Turn;
-        }
-        else if(currentStage == JakarooStages.Player3_Turn){
-            currentStage = JakarooStages.Player4_Turn;
-            stagePlayer = JakarooStages.Player4_Turn;
-        }
-        else if(currentStage == JakarooStages.Player4_Turn){
-            currentStage = JakarooStages.Player1_Turn;
-            stagePlayer = JakarooStages.Player1_Turn;
+            // Card Things shoudl be done here
+            //
+            // Card Things shoudl be done here
+
+            // Increase roundCounter
+            if(turnOn == 3){
+                roundCounter = (roundCounter+1)%3;
+            }
+
+            // Move the turn
+            turnOn = (turnOn+1)%4;
+
+            // Increase player counter
+            playCounter++;
+
+            if(currentStage == JakarooStages.Player1_Turn){
+                currentStage = JakarooStages.Player2_Turn;
+                stagePlayer = JakarooStages.Player2_Turn;
+            }
+            else if(currentStage == JakarooStages.Player2_Turn){
+                currentStage = JakarooStages.Player3_Turn;
+                stagePlayer = JakarooStages.Player3_Turn;
+            }
+            else if(currentStage == JakarooStages.Player3_Turn){
+                currentStage = JakarooStages.Player4_Turn;
+                stagePlayer = JakarooStages.Player4_Turn;
+            }
+            else if(currentStage == JakarooStages.Player4_Turn){
+                currentStage = JakarooStages.Player1_Turn;
+                stagePlayer = JakarooStages.Player1_Turn;
+            }
         }
     }
 
@@ -202,23 +208,4 @@ contract Jakaroo is Verifier{
     function getPlayGround() public view returns (uint[16] memory){
         return playGround.balls;
     }
-
-    function stringToUint(string s) constant returns (uint result) {
-        bytes memory b = bytes(s);
-        uint result = 0;
-        bool success = false;
-        for (uint i = 0; i < b.length; i++) { 
-            if (b[i] >= 48 && b[i] <= 57) {
-                result = result * 10 + (uint(b[i]) - 48); 
-                success = true;
-            } else {
-                result = 0
-                success = false;
-                break;
-            }
-        } 
-        require(success, "Problem in data conversion");
-        return result;
-    }
-
 }
