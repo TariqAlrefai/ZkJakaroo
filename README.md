@@ -4,12 +4,6 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [How to run]()
-- [Project Structure]()
-  - [circuits]() 
-  - [contracts]()
-    - [Card Distribution]()
-    - [Winning Stage]()
-  - [front-end]()
 - [Game description]()
   - [Card Functionality]()
   - [The Plaground]()
@@ -17,6 +11,12 @@
 - [How to Win?]()
 - [Things to be Noted]()
 - [Game Algorithm]()
+- [Project Structure]()
+  - [circuits]() 
+  - [contracts]()
+    - [Card Distribution]()
+    - [Winning Stage]()
+  - [front-end]()
 
 
 
@@ -29,7 +29,7 @@ Four players compute to place their balls in the playground, then to complete on
 
 ### Card Functionality
 
-  1. **Normal Cards:** 2,3,5,6,7,8,9,10 are moving the balls step forward according to thier value.
+  1. **Normal Cards:** 2,3,5,6,7,8,9,10, are moving the balls step forward according to thier value.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Playing_card_club_2.svg/300px-Playing_card_club_2.svg.png" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Playing_card_diamond_3.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Playing_card_heart_5.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Playing_card_spade_6.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Playing_card_heart_7.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Playing_card_diamond_8.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Playing_card_club_9.svg" width="80" height="100"> <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Playing_card_diamond_10.svg" width="80" height="100">
 
@@ -63,12 +63,12 @@ Four players compute to place their balls in the playground, then to complete on
 5. Players have to place all thier balls and move them to **winning area**.
 6. In the begnning, all four players has four balls in **Hive**
 
-<img src="https://i.ibb.co/1QR126c/JAKAROO-5-0.png">
+<img src="https://i.ibb.co/7RZyrwX/JAKAROO-4-0.png">
 
 ## Game Screen
 
 ## How to Win?
-
+  - The player must enter all of his four balls into the winning area.
 
 ## Things to be Noted 
   1. There is no difference beteween the type of the cards (Clubs, Diamonds, Hearts, Spades). 
@@ -81,8 +81,21 @@ Four players compute to place their balls in the playground, then to complete on
       * **You must specify that you need to burn**: Once you have to burn a card, you must specify that you will burn a card, there are two values for burnning, 0: for playing normal, 1: to burn a card. 
 
 
+***
 ## Game Algorithm
+
 <img src="https://i.ibb.co/WnLnSft/Block-Diagram.png">
+
+
+## Project Structure
+* Circuits:
+
+  *Description*
+* Contracts: 
+  * Card Distribution: 
+  * Winning Stage: 
+
+* Front-End: 
 
 # Don't delete for now tariq, I will do later
 ## Basic Sample Hardhat Project
